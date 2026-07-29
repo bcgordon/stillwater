@@ -259,10 +259,9 @@
 
 <script>
   // ── Access check ────────────────────────────────────────
-  // Uncomment this when deployed behind the gate
-  // if (sessionStorage.getItem('sw-access') !== 'true') {
-  //   window.location.replace('/');
-  // }
+  if (sessionStorage.getItem('sw-access') !== 'true') {
+    window.location.replace('/');
+  }
 
   // ── Water animation ─────────────────────────────────────
   const canvas = document.getElementById('water');

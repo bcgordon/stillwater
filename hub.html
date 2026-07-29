@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>still water</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --depth-1: #0a1628;
+      --depth-2: #0f2240;
+      --depth-3: #1a3a5c;
+      --surface: #e8f0f7;
+      --surface-mid: #c5d8e8;
+      --text-mid: #8fb3cc;
+      --text-dim: #4a7a99;
+      --accent: #7eb8d4;
+    }
+
+    html, body {
+      min-height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background: var(--depth-1);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      color: var(--surface);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem 2rem;
+      border-bottom: 1px solid rgba(26, 58, 92, 0.6);
+    }
+
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.5rem;
+      color: var(--surface);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .wordmark em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .header-label {
+      font-size: 0.62rem;
+      font-weight: 400;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── Main ── */
+    main {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1rem;
+    }
+
+    .greeting {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      color: var(--surface);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .divider {
+      width: 32px;
+      height: 1px;
+      background: var(--depth-3);
+      margin: 1rem auto 2.5rem;
+      animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    /* ── App grid ── */
+    .apps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 320px;
+      animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .app-card {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.1rem 1.4rem;
+      background: rgba(15, 34, 64, 0.6);
+      border: 1px solid var(--depth-3);
+      border-radius: 2px;
+      text-decoration: none;
+      color: var(--surface);
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      background: rgba(26, 58, 92, 0.5);
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .app-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .app-icon-placeholder {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--depth-3);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .app-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .app-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      color: var(--surface);
+    }
+
+    .app-desc {
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .app-arrow {
+      margin-left: auto;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      transition: color 0.3s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .app-card:hover .app-arrow {
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(26, 58, 92, 0.4);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 1.2rem 1.4rem; }
+      main { padding: 3rem 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="water"></canvas>
+
+<header>
+  <a class="wordmark" href="/">still <em>water</em></a>
+  <span class="header-label">private</span>
+</header>
+
+<main>
+  <div class="greeting">welcome back.</div>
+  <div class="divider"></div>
+
+  <div class="apps">
+
+    <!-- Hearth -->
+    <a class="app-card" href="/hearth/">
+      <div class="app-icon-placeholder">🏠</div>
+      <div class="app-info">
+        <div class="app-name">Hearth</div>
+        <div class="app-desc">home & family</div>
+      </div>
+      <span class="app-arrow">→</span>
+    </a>
+
+    <!-- Add more apps here as needed -->
+
+  </div>
+</main>
+
+<footer>still water &nbsp;·&nbsp; a quiet place</footer>
+
+<script>
+  // ── Access check ────────────────────────────────────────
+  // Uncomment this when deployed behind the gate
+  // if (sessionStorage.getItem('sw-access') !== 'true') {
+  //   window.location.replace('/');
+  // }
+
+  // ── Water animation ─────────────────────────────────────
+  const canvas = document.getElementById('water');
+  const ctx = canvas.getContext('2d');
+  let W, H, ripples = [], time = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function spawnRipple() {
+    ripples.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0,
+      maxR: 80 + Math.random() * 120,
+      speed: 0.4 + Math.random() * 0.3,
+      alpha: 0.18 + Math.random() * 0.12
+    });
+  }
+
+  setInterval(spawnRipple, 2200);
+  spawnRipple();
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#0a1628');
+    grad.addColorStop(0.5, '#0d1e38');
+    grad.addColorStop(1, '#081220');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    time += 0.008;
+    for (let i = 0; i < 5; i++) {
+      const y = H * (0.2 + i * 0.15) + Math.sin(time + i * 1.3) * 18;
+      const bandGrad = ctx.createLinearGradient(0, y - 1, 0, y + 1);
+      bandGrad.addColorStop(0, 'transparent');
+      bandGrad.addColorStop(0.5, `rgba(126,184,212,${0.04 + i * 0.01})`);
+      bandGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = bandGrad;
+      ctx.fillRect(0, y - 1, W, 2);
+    }
+
+    ripples = ripples.filter(rp => rp.alpha > 0.005);
+    ripples.forEach(rp => {
+      rp.r += rp.speed;
+      rp.alpha *= 0.985;
+      ctx.beginPath();
+      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(197, 216, 232, ${rp.alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>

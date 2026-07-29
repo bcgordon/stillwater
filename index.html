@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>still water</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --depth-1: #0a1628;
+      --depth-2: #0f2240;
+      --depth-3: #1a3a5c;
+      --surface: #e8f0f7;
+      --surface-mid: #c5d8e8;
+      --ripple: rgba(197, 216, 232, 0.18);
+      --text-light: #e8f0f7;
+      --text-mid: #8fb3cc;
+      --text-dim: #4a7a99;
+      --accent: #7eb8d4;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--depth-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+    }
+
+    /* — Water canvas — */
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    /* — Gate — */
+    .gate {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(3.2rem, 10vw, 5.5rem);
+      color: var(--surface);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .title em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .subtitle {
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 3.5rem;
+    }
+
+    .input-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 260px;
+      margin-bottom: 0.75rem;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      background: rgba(14, 34, 64, 0.7);
+      border: 1px solid var(--depth-3);
+      border-radius: 2px;
+      color: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+      -webkit-appearance: none;
+    }
+
+    input[type="password"]::placeholder {
+      color: var(--text-dim);
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+    }
+
+    input[type="password"]:focus {
+      border-color: var(--accent);
+      background: rgba(14, 34, 64, 0.9);
+    }
+
+    .enter-btn {
+      width: 100%;
+      max-width: 260px;
+      padding: 0.9rem;
+      background: transparent;
+      border: 1px solid var(--depth-3);
+      border-radius: 2px;
+      color: var(--text-mid);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
+
+    .enter-btn:hover {
+      border-color: var(--accent);
+      color: var(--surface);
+      background: rgba(126, 184, 212, 0.08);
+    }
+
+    .error {
+      margin-top: 1.2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      opacity: 0;
+      transition: opacity 0.4s;
+      min-height: 1em;
+    }
+
+    .error.show { opacity: 1; }
+
+    /* — Divider — */
+    .divider {
+      width: 32px;
+      height: 1px;
+      background: var(--depth-3);
+      margin: 2.5rem auto;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="water"></canvas>
+
+<div class="gate" id="gate">
+  <div class="title">still <em>water</em></div>
+  <div class="subtitle">a quiet place</div>
+  <div class="divider"></div>
+  <div class="input-wrap">
+    <input
+      id="pw"
+      type="password"
+      placeholder="passphrase"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    />
+  </div>
+  <button class="enter-btn" onclick="checkPass()">Enter</button>
+  <div class="error" id="err">try again</div>
+</div>
+
+<script>
+  // ── Passphrase ──────────────────────────────────────────
+  const PASS = 'stillwater'; // ← change this
+
+  if (sessionStorage.getItem('sw-access') === 'true') {
+    admit();
+  }
+
+  document.getElementById('pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPass();
+  });
+
+  function checkPass() {
+    const val = document.getElementById('pw').value.trim().toLowerCase();
+    if (val === PASS) {
+      sessionStorage.setItem('sw-access', 'true');
+      const gate = document.getElementById('gate');
+      gate.style.transition = 'opacity 0.8s';
+      gate.style.opacity = '0';
+      setTimeout(() => admit(), 800);
+    } else {
+      const err = document.getElementById('err');
+      err.classList.add('show');
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+      setTimeout(() => err.classList.remove('show'), 3000);
+    }
+  }
+
+  function admit() {
+    // Redirect to your family app — update this URL
+    window.location.href = 'https://bcgordon.github.io/hearth/';
+  }
+
+  // ── Water animation ─────────────────────────────────────
+  const canvas = document.getElementById('water');
+  const ctx = canvas.getContext('2d');
+
+  let W, H, ripples = [], time = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Gentle ambient ripples
+  function spawnRipple() {
+    ripples.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0,
+      maxR: 80 + Math.random() * 120,
+      speed: 0.4 + Math.random() * 0.3,
+      alpha: 0.18 + Math.random() * 0.12
+    });
+  }
+
+  // Spawn a ripple every 1.8s
+  setInterval(spawnRipple, 1800);
+  spawnRipple();
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Deep water gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#0a1628');
+    grad.addColorStop(0.5, '#0d1e38');
+    grad.addColorStop(1, '#081220');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle horizontal light bands (surface shimmer)
+    time += 0.008;
+    for (let i = 0; i < 5; i++) {
+      const y = H * (0.2 + i * 0.15) + Math.sin(time + i * 1.3) * 18;
+      const bandGrad = ctx.createLinearGradient(0, y - 1, 0, y + 1);
+      bandGrad.addColorStop(0, 'transparent');
+      bandGrad.addColorStop(0.5, `rgba(126,184,212,${0.04 + i * 0.01})`);
+      bandGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = bandGrad;
+      ctx.fillRect(0, y - 1, W, 2);
+    }
+
+    // Ripples
+    ripples = ripples.filter(rp => rp.alpha > 0.005);
+    ripples.forEach(rp => {
+      rp.r += rp.speed;
+      rp.alpha *= 0.985;
+      ctx.beginPath();
+      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(197, 216, 232, ${rp.alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>

@@ -199,6 +199,13 @@
 
   .edit-btn.active { background: var(--accent); color: var(--depth-1); border-color: var(--accent); }
 
+  .sync-status {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+    margin-right: 0.2rem;
+  }
+
   .edit-reset {
     display: none;
     width: 2.3rem;
@@ -525,8 +532,9 @@
 
 <footer>still water &nbsp;·&nbsp; a quiet place</footer>
 
-<div class="edit-hint">Tap any field to edit it, then hit Done to save.</div>
+<div class="edit-hint">Tap any field to edit it, then hit Done to save. Changes sync to everyone with this link.</div>
 <div class="edit-bar">
+  <span id="sync-status" class="sync-status"></span>
   <button id="edit-reset" class="edit-reset" title="Reset all fields to defaults">↺</button>
   <button id="edit-toggle" class="edit-btn">✏️ Edit</button>
 </div>
@@ -538,16 +546,52 @@
   //   window.location.replace('/');
   // }
 
-  // ── Edit mode ─────────────────────────────────────────────
-  const STORAGE_KEY = 'sw-trip-tn-al-edits';
+  // ── Edit mode — shared cloud sync via JSONBin ───────────────
+  const STORAGE_KEY = 'sw-trip-tn-al-edits';        // local cache / offline fallback
+  const JSONBIN_ID = '6a7e02eaf5f4af5e29123af7';
+  const JSONBIN_ACCESS_KEY = '$2a$10$P5UP6NIoqvfOy59e/zjhh.1h0vYAxLd.F1QIVlZ0L46x.uxwRyDvW';
+  const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
 
-  function loadEdits() {
+  function loadLocalEdits() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
     catch (e) { return {}; }
   }
 
-  function applyEdits() {
-    const edits = loadEdits();
+  function saveLocalEdits(edits) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }
+
+  async function fetchRemoteEdits() {
+    try {
+      const res = await fetch(`${JSONBIN_URL}/latest`, {
+        headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY, 'X-Bin-Meta': 'false' }
+      });
+      if (!res.ok) throw new Error('read failed: ' + res.status);
+      const data = await res.json();
+      saveLocalEdits(data);
+      return data;
+    } catch (e) {
+      console.warn('Sync unavailable, showing last saved copy:', e);
+      return null;
+    }
+  }
+
+  async function pushRemoteEdits(edits) {
+    try {
+      const res = await fetch(JSONBIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_ACCESS_KEY },
+        body: JSON.stringify(edits)
+      });
+      if (!res.ok) throw new Error('save failed: ' + res.status);
+      return true;
+    } catch (e) {
+      console.warn('Could not sync to cloud, saved locally only:', e);
+      return false;
+    }
+  }
+
+  function applyEdits(edits) {
     document.querySelectorAll('.editable').forEach(el => {
       const key = el.dataset.key;
       if (edits[key] !== undefined && edits[key] !== '') {
@@ -557,24 +601,34 @@
     });
   }
 
-  function saveEdits() {
-    const edits = loadEdits();
+  function gatherEdits() {
+    const edits = loadLocalEdits();
     document.querySelectorAll('.editable').forEach(el => {
       const text = el.textContent.trim();
       edits[el.dataset.key] = text;
       el.classList.toggle('placeholder', text.startsWith('[') && text.endsWith(']'));
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+    return edits;
   }
 
-  applyEdits();
+  const syncStatus = document.getElementById('sync-status');
+  function setStatus(text) { if (syncStatus) syncStatus.textContent = text; }
+
+  // Load: try cloud first, fall back to local cache
+  (async () => {
+    setStatus('syncing…');
+    const remote = await fetchRemoteEdits();
+    const edits = remote || loadLocalEdits();
+    applyEdits(edits);
+    setStatus(remote ? 'synced' : 'offline — showing last saved copy');
+  })();
 
   let editing = false;
   const editBtn = document.getElementById('edit-toggle');
   const resetBtn = document.getElementById('edit-reset');
   const editables = document.querySelectorAll('.editable');
 
-  editBtn.addEventListener('click', () => {
+  editBtn.addEventListener('click', async () => {
     editing = !editing;
     editables.forEach(el => {
       el.contentEditable = editing;
@@ -585,15 +639,23 @@
       editBtn.textContent = 'Done';
       editBtn.classList.add('active');
     } else {
-      saveEdits();
+      editBtn.disabled = true;
+      setStatus('saving…');
+      const edits = gatherEdits();
+      saveLocalEdits(edits);
+      const ok = await pushRemoteEdits(edits);
+      setStatus(ok ? 'synced' : 'saved locally — will retry sync next visit');
+      editBtn.disabled = false;
       editBtn.textContent = '✏️ Edit';
       editBtn.classList.remove('active');
     }
   });
 
-  resetBtn.addEventListener('click', () => {
-    if (confirm('Reset all fields back to their original defaults?')) {
+  resetBtn.addEventListener('click', async () => {
+    if (confirm('Reset all fields back to their original defaults? This clears the shared copy for everyone.')) {
       localStorage.removeItem(STORAGE_KEY);
+      setStatus('resetting…');
+      await pushRemoteEdits({});
       location.reload();
     }
   });

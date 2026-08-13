@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Better Choices, Better Life</title>
+<style>
+  :root{
+    --deep:#0f4c5c; --mid:#1a7a8c; --light:#5fb3c9; --pale:#eaf6f8;
+    --sand:#f7f3ea; --accent:#e08e45; --warn:#c0392b; --warnbg:#fdecea;
+    --ok:#2e7d32; --okbg:#eaf6ec; --text:#1e2a2e; --muted:#5b6b6f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--sand); color:var(--text); line-height:1.5;
+  }
+  header{
+    background:linear-gradient(135deg,var(--deep),var(--mid));
+    color:#fff; padding:28px 20px 22px;
+  }
+  header h1{margin:0 0 4px; font-size:1.6rem;}
+  header p{margin:0; opacity:.9; font-size:.95rem;}
+  .wrap{max-width:840px; margin:0 auto; padding:0 16px;}
+  .banner{
+    max-width:840px; margin:-14px auto 0; background:#fff; border-left:5px solid var(--accent);
+    padding:14px 18px; border-radius:8px; box-shadow:0 4px 14px rgba(0,0,0,.08); font-size:.92rem;
+  }
+  .banner strong{color:var(--deep);}
+  .start-date{
+    max-width:840px; margin:16px auto 0; background:var(--pale); border:1px solid var(--light);
+    border-radius:10px; padding:14px 18px; text-align:center; font-weight:600; color:var(--deep);
+  }
+  nav.tabs{
+    max-width:840px; margin:20px auto 0; display:flex; gap:6px; flex-wrap:wrap; padding:0 16px;
+  }
+  nav.tabs button{
+    flex:1 1 auto; min-width:100px; padding:10px 10px; border:none; border-radius:8px 8px 0 0;
+    background:#dce9eb; color:var(--deep); font-weight:600; cursor:pointer; font-size:.82rem;
+  }
+  nav.tabs button.active{background:#fff; box-shadow:0 -2px 8px rgba(0,0,0,.06);}
+  main{max-width:840px; margin:0 auto 60px; background:#fff; padding:24px 22px 32px; border-radius:0 0 12px 12px; box-shadow:0 4px 20px rgba(0,0,0,.06);}
+  section{display:none;}
+  section.active{display:block;}
+  h2{color:var(--deep); font-size:1.25rem; margin-top:0;}
+  h3{color:var(--mid); font-size:1.02rem; margin-bottom:6px;}
+  .card{background:var(--pale); border-radius:10px; padding:14px 16px; margin-bottom:14px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  @media (max-width:600px){.grid2{grid-template-columns:1fr;} .grid4{grid-template-columns:1fr 1fr;}}
+  .callout{
+    background:var(--warnbg); border-left:4px solid var(--warn); border-radius:8px;
+    padding:12px 14px; margin:14px 0; font-size:.92rem;
+  }
+  .callout.ok{background:var(--okbg); border-left-color:var(--ok);}
+  ul{padding-left:20px; margin:8px 0;}
+  li{margin-bottom:4px;}
+  .pill{display:inline-block; background:var(--light); color:#fff; font-size:.75rem; font-weight:700;
+    padding:2px 10px; border-radius:999px; margin-bottom:8px;}
+  table{width:100%; border-collapse:collapse; font-size:.9rem; margin:10px 0;}
+  th,td{text-align:left; padding:6px 8px; border-bottom:1px solid #e2e2e2;}
+  th{color:var(--deep);}
+  .week{border:1px solid #e2e2e2; border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+  .week h3{margin-bottom:2px;}
+  .week .dates{color:var(--muted); font-size:.82rem; margin-bottom:8px;}
+  .tracker-week{border:1px solid #e2e2e2; border-radius:10px; padding:12px 14px; margin-bottom:12px;}
+  .week-target{color:var(--deep); font-weight:600; font-size:.82rem; margin-bottom:2px;}
+  .week-progress{color:var(--muted); font-size:.78rem; margin-bottom:10px;}
+  .day-group{display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed #eee; align-items:flex-start;}
+  .day-group:last-child{border-bottom:none;}
+  .day-activities{display:flex; flex-direction:column; gap:5px; flex:1;}
+  .day-activities label{display:flex; align-items:center; gap:8px; font-size:.85rem; cursor:pointer;}
+  .day-activities input{width:17px; height:17px; flex:0 0 auto;}
+  .day-badge{font-weight:700; color:var(--mid); width:40px; font-size:.85rem; padding-top:4px; flex:0 0 auto;}
+  footer{max-width:840px; margin:0 auto 40px; padding:0 16px; font-size:.78rem; color:var(--muted);}
+  footer a{color:var(--mid);}
+  .reset-btn{background:none; border:1px solid var(--muted); color:var(--muted); border-radius:6px; padding:6px 12px; font-size:.8rem; cursor:pointer; margin-top:10px;}
+
+  /* Food tracker specific */
+  .subtabs{display:flex; gap:8px; margin-bottom:14px;}
+  .subtabs button{padding:6px 14px; border-radius:999px; border:1px solid var(--light); background:#fff; color:var(--deep); font-weight:600; font-size:.82rem; cursor:pointer;}
+  .subtabs button.active{background:var(--mid); color:#fff; border-color:var(--mid);}
+  .subview{display:none;}
+  .subview.active{display:block;}
+  .settings-row{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:16px;}
+  .settings-row .field{display:flex; flex-direction:column; gap:4px;}
+  .settings-row label{font-size:.78rem; color:var(--muted); font-weight:600;}
+  .settings-row input, .settings-row select{padding:7px 8px; border:1px solid #ccc; border-radius:6px; font-size:.88rem;}
+  .date-nav{display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .date-nav button{border:1px solid var(--light); background:#fff; color:var(--deep); border-radius:6px; padding:6px 10px; cursor:pointer; font-weight:700; flex:0 0 auto;}
+  .date-nav input[type=date]{padding:6px 8px; border:1px solid #ccc; border-radius:6px; flex:1 1 130px; min-width:0;}
+  .search-box{position:relative; margin-bottom:10px;}
+  .search-box input{width:100%; padding:9px 10px; border:1px solid #ccc; border-radius:8px; font-size:.92rem;}
+  .search-results{border:1px solid #e2e2e2; border-radius:8px; margin-top:4px; max-height:220px; overflow-y:auto;}
+  .search-results div{padding:8px 10px; cursor:pointer; font-size:.88rem; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:2px 8px;}
+  .search-results div:hover{background:var(--pale);}
+  .search-results span.meta{color:var(--muted); font-size:.78rem;}
+  .staged{background:var(--pale); border-radius:8px; padding:12px; display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:16px;}
+  .staged .field{display:flex; flex-direction:column; gap:4px;}
+  .staged label{font-size:.78rem; color:var(--muted); font-weight:600;}
+  .staged input{width:80px; padding:6px 8px; border:1px solid #ccc; border-radius:6px;}
+  .add-btn{background:var(--mid); color:#fff; border:none; border-radius:6px; padding:8px 16px; font-weight:700; cursor:pointer; font-size:.86rem;}
+  .custom-form{display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:8px; margin-bottom:20px;}
+  .custom-form input, .custom-form select{padding:7px 8px; border:1px solid #ccc; border-radius:6px; font-size:.85rem;}
+  @media (max-width:600px){.custom-form{grid-template-columns:1fr 1fr;}}
+  .totals-bar{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px;}
+  @media (max-width:600px){.totals-bar{grid-template-columns:1fr 1fr;}}
+  .total-card{border-radius:10px; padding:12px; text-align:center; background:var(--pale);}
+  .total-card.over{background:var(--warnbg);}
+  .total-card.good{background:var(--okbg);}
+  .total-card .val{font-size:1.15rem; font-weight:800; color:var(--deep);}
+  .total-card .lbl{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.03em;}
+  .log-table td button{background:none; border:none; color:var(--warn); cursor:pointer; font-weight:700; font-size:1rem;}
+  .empty-note{color:var(--muted); font-size:.88rem; padding:10px 0;}
+  .history-table td.pass{color:var(--ok); font-weight:700;}
+  .history-table td.fail{color:var(--warn); font-weight:700;}
+
+  /* Food chart */
+  .food-chart{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:14px 0 6px;}
+  @media (max-width:640px){.food-chart{grid-template-columns:1fr;}}
+  .fc-col{border-radius:10px; padding:12px 14px; font-size:.85rem;}
+  .fc-col ul{padding-left:18px; margin:0;}
+  .fc-col li{margin-bottom:6px;}
+  .fc-head{font-weight:800; font-size:.95rem; margin-bottom:8px;}
+  .fc-focus{background:var(--okbg);}
+  .fc-focus .fc-head{color:var(--ok);}
+  .fc-limit{background:#fff8e6;}
+  .fc-limit .fc-head{color:#9a6b00;}
+  .fc-avoid{background:var(--warnbg);}
+  .fc-avoid .fc-head{color:var(--warn);}
+
+  /* Table safety net for narrow screens */
+  .table-wrap{width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; margin:10px 0;}
+  .table-wrap table{margin:0;}
+
+  /* Small phone screens */
+  html, body{overflow-x:hidden;}
+  @media (max-width:480px){
+    header{padding:22px 14px 18px;}
+    header h1{font-size:1.3rem;}
+    header p{font-size:.85rem;}
+    .wrap, .banner, .start-date, nav.tabs, footer{padding-left:12px; padding-right:12px;}
+    .banner{font-size:.85rem; padding:12px 14px;}
+    .start-date{font-size:.85rem; padding:12px 14px;}
+    main{padding:18px 14px 26px;}
+    h2{font-size:1.1rem;}
+    h3{font-size:.95rem;}
+    nav.tabs{gap:5px;}
+    nav.tabs button{min-width:0; flex:1 1 30%; font-size:.75rem; padding:9px 6px;}
+    table{font-size:.8rem;}
+    th,td{padding:5px 5px;}
+    .totals-bar{grid-template-columns:1fr 1fr; gap:8px;}
+    .total-card{padding:9px;}
+    .total-card .val{font-size:1rem;}
+    .total-card .lbl{font-size:.65rem;}
+    .settings-row{flex-direction:column; align-items:stretch; gap:8px;}
+    .settings-row .field{width:100%;}
+    .settings-row input, .settings-row select{width:100%;}
+    .custom-form{grid-template-columns:1fr;}
+    .staged{flex-direction:column; align-items:stretch;}
+    .staged input{width:100%;}
+    .add-btn{width:100%;}
+  }
+  @media (max-width:600px){
+    #customCategory{grid-column:1/-1;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>🌊 Better Choices, Better Life</h1>
+    <p>Built for stillwater.place — a gradual, attainable diet & movement reset</p>
+  </div>
+</header>
+
+<div class="banner">
+  <strong>Not medical advice.</strong> This is general education based on published kidney-health research, not a
+  personalized prescription. You're managing PKD and a rising creatinine, and two things are actually changing right
+  now — amlodipine going from 5mg to 10mg, and starting Lexapro (you've been stable on lisinopril 40mg and
+  amitriptyline 25mg for years, so those are background context, not new changes). Please review this plan with
+  your nephrologist and prescriber before you start, and ask them to check labs (creatinine/eGFR, sodium, potassium)
+  a few weeks in. Stop and call your doctor for chest pain, fainting, severe dizziness, or signs of an allergic reaction.
+</div>
+
+<div class="start-date" id="startDateBanner">Plan begins Monday, August 24, 2026 — after your trip. Days 1–2 back (Aug 22–23) are just for resting and unpacking.</div>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="diet">Diet Guide</button>
+  <button class="tab-btn" data-tab="exercise">Exercise Ramp</button>
+  <button class="tab-btn" data-tab="meds">Medication Notes</button>
+  <button class="tab-btn" data-tab="foodtracker">Food Tracker</button>
+  <button class="tab-btn" data-tab="tracker">Weekly Tracker</button>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="active">
+    <h2>The four pillars</h2>
+    <div class="grid2">
+      <div class="card"><h3>🧂 Sodium down</h3>Target under 2,300mg/day. Lower sodium is linked to slower cyst growth and better blood pressure control in PKD.</div>
+      <div class="card"><h3>💧 Fluid up</h3>Build gradually toward ~3L/day. Higher fluid intake suppresses vasopressin, a hormone tied to cyst growth.</div>
+      <div class="card"><h3>🚶 Movement, low-impact</h3>Regular low-impact cardio + light resistance, avoiding contact sports and direct blows to the back/flank.</div>
+      <div class="card"><h3>🌱 Plants first</h3>5+ servings of fruit/veg daily, plant protein (beans, lentils, tofu) favored over red and processed meat.</div>
+    </div>
+
+    <h2>How the ramp works</h2>
+    <p>Six weeks, starting Aug 24. Each week nudges diet and exercise up slightly rather than overhauling everything
+    at once — the goal is something you can actually sustain, not a crash reset. Use the Food Tracker tab to log
+    meals against your sodium, protein, and fluid targets day to day.</p>
+  </section>
+
+  <!-- DIET -->
+  <section id="diet">
+    <h2>Diet targets</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Nutrient</th><th>Target</th><th>Why</th></tr>
+      <tr><td>Sodium</td><td>&lt; 2,300mg/day</td><td>Lower vasopressin → slower cyst growth; better BP control</td></tr>
+      <tr><td>Protein</td><td>~0.8g per kg body weight/day, mostly plant-based</td><td>Reduces kidney workload; adjust with your dietitian if eGFR &lt; 60</td></tr>
+      <tr><td>Fluid</td><td>Build to ~3L/day</td><td>Suppresses vasopressin (research is strongest in animal studies; human data still developing)</td></tr>
+      <tr><td>Produce</td><td>5+ servings/day</td><td>DASH-style pattern, supports BP and heart health</td></tr>
+    </table>
+    </div>
+
+    <div class="callout ok">
+      <strong>Fluid + Lexapro note:</strong> SSRIs like escitalopram carry a small risk of low blood sodium
+      (hyponatremia), and PKD's high-fluid protocol pushes the same direction. Watch for headache, confusion,
+      nausea, or unusual fogginess as you ramp fluid up, and mention this combination to your doctor at your next
+      check-in so sodium gets checked on labs.
+    </div>
+
+    <h3>Food chart — easy-to-source staples</h3>
+    <p style="color:var(--muted); font-size:.85rem; margin-top:-4px;">Built for where you actually are — early PKD with elevated creatinine, not end-stage disease. No potassium or phosphorus restriction here; that's typically only needed later on, and isn't part of your picture right now. Focus is sodium and BP.</p>
+
+    <div class="food-chart">
+      <div class="fc-col fc-focus">
+        <div class="fc-head">✅ Focus on</div>
+        <ul>
+          <li>Water, sparkling water</li>
+          <li>Apples, berries, grapes, watermelon, pineapple, oranges, bananas</li>
+          <li>Potatoes, tomatoes, spinach, avocado</li>
+          <li>Cauliflower, cabbage, cucumber, lettuce, bell peppers, green beans, zucchini, carrots</li>
+          <li>Onion, garlic</li>
+          <li>Oats, brown rice, quinoa, whole wheat bread/pasta</li>
+          <li>Beans, lentils, chickpeas, tofu, edamame</li>
+          <li>Nuts and seeds (almonds, walnuts, peanut butter)</li>
+          <li>Low-fat or fat-free dairy — skim milk, low-sodium cheese, and plain Greek or Bulgarian yogurt (protein-dense, low sodium, good probiotic option)</li>
+          <li>Olive oil, canola oil</li>
+        </ul>
+      </div>
+      <div class="fc-col fc-limit">
+        <div class="fc-head">⚠️ Limit</div>
+        <ul>
+          <li>Red meat (beef, pork, lamb)</li>
+          <li>Eggs</li>
+          <li>Fish and shellfish (salmon, tuna, shrimp)</li>
+          <li>Chicken, turkey</li>
+          <li>Full-fat/salted cheese, whole milk, sweetened yogurt, ice cream</li>
+          <li>Added sugar, refined white bread/pasta, flavored/sweetened yogurt (incl. sweetened Greek)</li>
+          <li>Alcohol (max 1–2 drinks/day if you drink)</li>
+        </ul>
+      </div>
+      <div class="fc-col fc-avoid">
+        <div class="fc-head">🚫 Avoid</div>
+        <ul>
+          <li>Bacon, sausage, deli/cured meats, hot dogs</li>
+          <li>Canned soups, pickles</li>
+          <li>Fast food, frozen pizza</li>
+          <li>Chips, pretzels, salted snacks</li>
+          <li>Processed cheese products (e.g. cheese spread, American singles)</li>
+          <li>Grapefruit / grapefruit juice (amlodipine interaction)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      Potassium-heavy foods (potatoes, tomatoes, spinach, avocado, bananas) are included above on purpose — potassium
+      restriction generally isn't needed until later-stage kidney disease, and that's not your situation. Worth
+      keeping an eye on potassium at your regular labs simply because lisinopril can nudge it up over time, but no
+      need to cut these out preemptively.
+    </div>
+  </section>
+
+  <!-- EXERCISE -->
+  <section id="exercise">
+    <h2>6-week ramp (starts Mon, Aug 24)</h2>
+    <div class="callout">
+      <strong>PKD-specific caution:</strong> avoid contact/collision sports and activities with a direct risk of a
+      blow to the back or flank (football, rugby, hockey, boxing/kickboxing, horseback riding) — enlarged kidneys
+      are more vulnerable to cyst rupture. Walking, swimming, cycling, and the elliptical are all good low-impact options.
+    </div>
+    <div class="callout">
+      <strong>Medication caution:</strong> amlodipine is going up to 10mg and Lexapro is brand new — both can cause
+      dizziness or lightheadedness in the first couple of weeks, and exercise-induced vasodilation can compound that.
+      Rise slowly from sitting/lying, keep the first two weeks genuinely easy, and stop if you feel lightheaded.
+    </div>
+
+    <div class="week"><h3>Week 1 — Foundation</h3><div class="dates">Aug 24–30</div>
+      Walk 15–20 min, easy pace, 4x this week. Add 5 min gentle stretching after each walk.
+    </div>
+    <div class="week"><h3>Week 2 — Build consistency</h3><div class="dates">Aug 31–Sep 6</div>
+      Walk 20–25 min, 5x this week. Add 2x 10-min bodyweight mobility (chair squats, wall push-ups, seated marches).
+    </div>
+    <div class="week"><h3>Week 3 — Add resistance</h3><div class="dates">Sep 7–13</div>
+      Walk or bike 25–30 min, 5x. Add 2x 15-min light resistance (bands or bodyweight: squats, rows, glute bridges).
+    </div>
+    <div class="week"><h3>Week 4 — Full targets</h3><div class="dates">Sep 14–20</div>
+      30 min moderate cardio (brisk walk, swim, stationary bike), 5x/week + 2–3x 20-min resistance.
+    </div>
+    <div class="week"><h3>Week 5 — Add variety</h3><div class="dates">Sep 21–27</div>
+      Same cardio load, swap in a swim session or two. One longer weekend walk (avoid rough/uneven terrain — fall and impact risk). Resistance 3x/week.
+    </div>
+    <div class="week"><h3>Week 6+ — Maintenance</h3><div class="dates">Sep 28 onward</div>
+      ~150 min/week moderate cardio + 2–3 resistance sessions, sustained. Recheck in with your doctor on labs and adjust from there.
+    </div>
+  </section>
+
+  <!-- MEDS -->
+  <section id="meds">
+    <h2>What's actually changing, and what to watch</h2>
+
+    <h3>Amlodipine 5mg → 10mg <span style="font-weight:400; color:var(--muted); font-size:.8rem;">(change)</span></h3>
+    <ul>
+      <li>Higher dose raises the chance of dizziness, flushing, headache, or ankle swelling, especially in the first 1–2 weeks.</li>
+      <li>Rise slowly from sitting or lying down — this matters more now since you're also on lisinopril and amitriptyline long-term, both of which can independently cause dizziness on standing. The dose bump adds to an effect your body may already be managing.</li>
+      <li>Avoid grapefruit/grapefruit juice entirely — it can raise amlodipine levels.</li>
+      <li>Alcohol adds to the blood-pressure-lowering effect — go easy, especially early on.</li>
+    </ul>
+
+    <h3>Starting Lexapro (escitalopram) <span style="font-weight:400; color:var(--muted); font-size:.8rem;">(new)</span></h3>
+    <ul>
+      <li>Common early side effects — nausea, headache, dizziness, sleep changes, sweating — usually ease within 2–4 weeks as your body adjusts.</li>
+      <li>Exercise is generally fine and can help mood, but keep the first two weeks light while you see how you respond.</li>
+      <li>Small hyponatremia risk (see fluid note in Diet Guide) — worth a mention at your next lab check given the high-fluid PKD protocol.</li>
+      <li><strong>The one real new interaction to know:</strong> adding Lexapro on top of your long-term amitriptyline raises a modest serotonin syndrome risk (both are serotonergic). This is a combination prescribers do use together deliberately, so it's likely already accounted for — but it's worth confirming with whoever prescribed the Lexapro that they knew about the amitriptyline. Watch for agitation, tremor, sweating, fast heart rate, or confusion in the first couple weeks, especially as the Lexapro dose is titrated.</li>
+    </ul>
+
+    <h3>Your existing meds — context, not changes</h3>
+    <p style="font-size:.9rem; color:var(--muted);">You've been stable on these for years, so no new monitoring is needed just because of this plan — but they're relevant background for the diet and exercise guidance above.</p>
+    <ul>
+      <li><strong>Lisinopril 40mg:</strong> ACE inhibitors can raise blood potassium, more so with reduced kidney function — not a concern at your current stage, but a good reason to keep potassium on the regular lab panel over time. Also: avoid NSAIDs (ibuprofen, naproxen) — combined with an ACE inhibitor they raise both potassium and acute kidney injury risk; acetaminophen is the safer option for pain.</li>
+      <li><strong>Amitriptyline 25mg:</strong> can cause dry mouth, constipation, and dizziness on standing — the dry mouth may actually make the 3L/day fluid goal easier to hit, and extra fluid helps counter the constipation too. If it's dosed at night for sleep, morning grogginess is common, so consider saving harder workouts for later in the day.</li>
+    </ul>
+
+    <div class="callout">
+      Bottom line: the amlodipine increase and the new Lexapro are the two things to actually monitor closely. Both
+      compound existing effects from lisinopril and amitriptyline rather than introducing brand-new risk — mainly
+      more dizziness-on-standing potential, and (with Lexapro specifically) a bit more serotonergic load on top of
+      the amitriptyline. Worth a quick confirmation with your prescriber that they have the full medication list
+      before Aug 24.
+    </div>
+  </section>
+
+  <!-- FOOD TRACKER -->
+  <section id="foodtracker">
+    <h2>Food tracker</h2>
+    <p style="color:var(--muted); font-size:.88rem;">Everything here is saved in this browser only. Values are typical/average per serving, not lab-verified — for a med condition like this, treat totals as a helpful guide, not clinical precision.</p>
+
+    <div class="settings-row">
+      <div class="field">
+        <label for="weightInput">Your weight</label>
+        <input type="number" id="weightInput" min="1" placeholder="e.g. 170">
+      </div>
+      <div class="field">
+        <label for="weightUnit">Unit</label>
+        <select id="weightUnit"><option value="lb">lb</option><option value="kg">kg</option></select>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <div style="font-size:.85rem; color:var(--muted);">Protein target: <strong id="proteinTargetDisplay">— set weight</strong></div>
+      </div>
+    </div>
+
+    <div class="subtabs">
+      <button class="subtab-btn active" data-sub="logview">Today's log</button>
+      <button class="subtab-btn" data-sub="historyview">History</button>
+    </div>
+
+    <div id="logview" class="subview active">
+      <div class="date-nav">
+        <button id="prevDay">←</button>
+        <input type="date" id="logDate">
+        <button id="nextDay">→</button>
+        <button id="todayBtn" style="font-size:.75rem;">Today</button>
+      </div>
+
+      <div class="totals-bar" id="totalsBar"></div>
+
+      <h3>Add from food list</h3>
+      <div class="search-box">
+        <input type="text" id="foodSearch" placeholder="Search foods (e.g. lentils, chicken, bacon)…" autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="staged" id="stagedArea" style="display:none;">
+        <div class="field"><label id="stagedName">—</label><span id="stagedMeta" style="font-size:.78rem; color:var(--muted);"></span></div>
+        <div class="field"><label for="stagedQty">Qty (servings)</label><input type="number" id="stagedQty" value="1" min="0.25" step="0.25"></div>
+        <button class="add-btn" id="addStagedBtn">Add to log</button>
+      </div>
+
+      <h3>Or add a custom item</h3>
+      <div class="custom-form">
+        <input type="text" id="customName" placeholder="Food name">
+        <input type="number" id="customSodium" placeholder="Sodium mg">
+        <input type="number" id="customProtein" placeholder="Protein g">
+        <input type="number" id="customFluid" placeholder="Fluid mL">
+        <select id="customCategory">
+          <option value="other">Other</option>
+          <option value="produce">Produce (counts to 5-a-day)</option>
+          <option value="protein">Protein</option>
+          <option value="grain">Grain</option>
+          <option value="dairy">Dairy</option>
+          <option value="processed">Processed / high-sodium</option>
+          <option value="beverage">Beverage</option>
+        </select>
+      </div>
+      <button class="add-btn" id="addCustomBtn">Add custom item</button>
+
+      <h3 style="margin-top:22px;">Logged today</h3>
+      <div class="table-wrap">
+      <table class="log-table" id="logTable"><tbody></tbody></table>
+      </div>
+      <div class="empty-note" id="emptyNote" style="display:none;">Nothing logged for this day yet.</div>
+    </div>
+
+    <div id="historyview" class="subview">
+      <div class="table-wrap">
+      <table class="history-table">
+        <thead><tr><th>Date</th><th>Sodium</th><th>Protein</th><th>Fluid</th><th>Produce</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+      </div>
+      <div class="empty-note" id="historyEmptyNote" style="display:none;">No days logged yet — entries you add in Today's log will show up here.</div>
+    </div>
+  </section>
+
+  <!-- WEEKLY (habit) TRACKER -->
+  <section id="tracker">
+    <h2>Weekly habit tracker</h2>
+    <p style="color:var(--muted); font-size:.88rem;">Each week's specific activities from the Exercise Ramp are checkable right here — no need to jump back and forth. Checks save automatically. For nutrition numbers, use the Food Tracker tab.</p>
+    <div id="trackerContainer"></div>
+    <button class="reset-btn" id="resetTracker">Reset all checkmarks</button>
+  </section>
+
+</main>
+
+<footer>
+  <p><strong>Sources:</strong>
+    <a href="https://www.thekidneydietitian.org/the-pkd-diet/" target="_blank">The Kidney Dietitian — The PKD Diet</a> ·
+    <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7692491/" target="_blank">Sodium intake in ADPKD (NCBI)</a> ·
+    <a href="https://evidence.nejm.org/doi/full/10.1056/EVIDoa2100021" target="_blank">Prescribed Water Intake in ADPKD — NEJM Evidence</a> ·
+    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10255338/" target="_blank">Diet & Physical Activity in ADPKD — literature review (PMC)</a> ·
+    <a href="https://www.drugs.com/sfx/escitalopram-side-effects.html" target="_blank">Escitalopram side effects — Drugs.com</a> ·
+    <a href="https://www.doctronic.ai/blog/grapefruit-and-blood-pressure-medication/" target="_blank">Grapefruit & BP medication</a>
+  </p>
+  <p>Food database values are typical USDA-style averages for common preparations, meant as a practical guide, not lab-verified nutrition facts.</p>
+  <p>Built for stillwater.place · Last updated August 13, 2026</p>
+</footer>
+
+<script>
+  // ---------- Tabs ----------
+  const buttons = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('main section');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      sections.forEach(s=>s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------- Weekly habit tracker ----------
+  const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const weeks = [
+    {label:"Week 1 — Foundation", dates:"Aug 24–30", key:"w1", target:"Target: 4 walks + stretch",
+      activities:["Walk 15–20 min (easy pace)","5-min stretch after walk"]},
+    {label:"Week 2 — Build consistency", dates:"Aug 31–Sep 6", key:"w2", target:"Target: 5 walks + 2 mobility sessions",
+      activities:["Walk 20–25 min","10-min bodyweight mobility"]},
+    {label:"Week 3 — Add resistance", dates:"Sep 7–13", key:"w3", target:"Target: 5 cardio + 2 resistance sessions",
+      activities:["Walk/bike 25–30 min","15-min light resistance (bands/bodyweight)"]},
+    {label:"Week 4 — Full targets", dates:"Sep 14–20", key:"w4", target:"Target: 5 cardio + 2–3 resistance sessions",
+      activities:["30 min moderate cardio (walk/swim/bike)","20-min resistance session"]},
+    {label:"Week 5 — Add variety", dates:"Sep 21–27", key:"w5", target:"Target: 5 cardio + 3 resistance + 1 long walk",
+      activities:["30+ min cardio (mix in a swim)","20-min resistance session","Longer weekend walk (flat, even terrain)"]},
+    {label:"Week 6+ — Maintenance", dates:"Sep 28 onward", key:"w6", target:"Target: ~150 min/week cardio + 2–3 resistance sessions",
+      activities:["30 min moderate cardio","Resistance session"]},
+  ];
+  const trackerContainer = document.getElementById('trackerContainer');
+  const HABIT_KEY = "pkdPlanTracker";
+  let habitState = {};
+  try { habitState = JSON.parse(localStorage.getItem(HABIT_KEY)) || {}; } catch(e) { habitState = {}; }
+  function saveHabit(){ localStorage.setItem(HABIT_KEY, JSON.stringify(habitState)); }
+
+  function updateWeekProgress(week){
+    const progEl = document.getElementById(`prog-${week.key}`);
+    if(!progEl) return;
+    const counts = week.activities.map(()=>0);
+    DAYS.forEach(day=>{
+      week.activities.forEach((act, i)=>{
+        if(habitState[`${week.key}-${day}-${i}`]) counts[i]++;
+      });
+    });
+    progEl.textContent = "So far: " + week.activities.map((act,i)=>`${counts[i]}× ${act.split(' (')[0].split(',')[0]}`).join(" · ");
+  }
+
+  weeks.forEach(week=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'tracker-week';
+
+    const h = document.createElement('h3');
+    h.textContent = `${week.label} (${week.dates})`;
+    wrap.appendChild(h);
+
+    const target = document.createElement('div');
+    target.className = 'week-target';
+    target.textContent = week.target;
+    wrap.appendChild(target);
+
+    const progress = document.createElement('div');
+    progress.className = 'week-progress';
+    progress.id = `prog-${week.key}`;
+    wrap.appendChild(progress);
+
+    DAYS.forEach(day=>{
+      const row = document.createElement('div');
+      row.className = 'day-group';
+      const badge = document.createElement('span');
+      badge.className = 'day-badge';
+      badge.textContent = day;
+      row.appendChild(badge);
+
+      const actList = document.createElement('div');
+      actList.className = 'day-activities';
+      week.activities.forEach((act, i)=>{
+        const label = document.createElement('label');
+        const id = `${week.key}-${day}-${i}`;
+        label.setAttribute('for', id);
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.id = id;
+        input.checked = !!habitState[id];
+        input.addEventListener('change', ()=>{
+          habitState[id] = input.checked;
+          saveHabit();
+          updateWeekProgress(week);
+        });
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(act));
+        actList.appendChild(label);
+      });
+      row.appendChild(actList);
+      wrap.appendChild(row);
+    });
+
+    trackerContainer.appendChild(wrap);
+    updateWeekProgress(week);
+  });
+
+  document.getElementById('resetTracker').addEventListener('click', ()=>{
+    if(confirm("Clear all checkmarks?")){
+      habitState = {};
+      saveHabit();
+      document.querySelectorAll('#trackerContainer input[type=checkbox]').forEach(cb=>cb.checked=false);
+      weeks.forEach(updateWeekProgress);
+    }
+  });
+
+  // ---------- Food tracker ----------
+  const FOODS = [
+    // Produce
+    {name:"Apple", unit:"1 medium", sodium:2, protein:0.5, fluid:0, category:"produce"},
+    {name:"Banana", unit:"1 medium", sodium:1, protein:1.3, fluid:0, category:"produce"},
+    {name:"Blueberries", unit:"1 cup", sodium:1, protein:1.1, fluid:0, category:"produce"},
+    {name:"Strawberries", unit:"1 cup", sodium:2, protein:1, fluid:0, category:"produce"},
+    {name:"Grapes", unit:"1 cup", sodium:3, protein:1.1, fluid:0, category:"produce"},
+    {name:"Watermelon", unit:"1 cup", sodium:2, protein:0.9, fluid:0, category:"produce"},
+    {name:"Orange", unit:"1 medium", sodium:0, protein:1.2, fluid:0, category:"produce"},
+    {name:"Pineapple", unit:"1 cup", sodium:2, protein:0.9, fluid:0, category:"produce"},
+    {name:"Cauliflower", unit:"1 cup", sodium:30, protein:2, fluid:0, category:"produce"},
+    {name:"Cabbage", unit:"1 cup", sodium:16, protein:1, fluid:0, category:"produce"},
+    {name:"Cucumber", unit:"1 cup", sodium:2, protein:0.8, fluid:0, category:"produce"},
+    {name:"Lettuce", unit:"1 cup", sodium:5, protein:0.5, fluid:0, category:"produce"},
+    {name:"Bell pepper", unit:"1 cup", sodium:3, protein:1, fluid:0, category:"produce"},
+    {name:"Green beans", unit:"1 cup", sodium:6, protein:2, fluid:0, category:"produce"},
+    {name:"Carrots", unit:"1 cup", sodium:88, protein:1.1, fluid:0, category:"produce"},
+    {name:"Zucchini", unit:"1 cup", sodium:16, protein:1.5, fluid:0, category:"produce"},
+    {name:"Onion", unit:"1/2 cup", sodium:3, protein:0.6, fluid:0, category:"produce"},
+    {name:"Garlic", unit:"1 clove", sodium:0.5, protein:0.2, fluid:0, category:"produce"},
+    {name:"Peach", unit:"1 medium", sodium:0, protein:0.7, fluid:0, category:"produce"},
+    {name:"Pear", unit:"1 medium", sodium:2, protein:0.6, fluid:0, category:"produce"},
+    // Protein
+    {name:"Black beans (unsalted, cooked)", unit:"1/2 cup", sodium:1, protein:7.6, fluid:0, category:"protein"},
+    {name:"Lentils (cooked)", unit:"1/2 cup", sodium:2, protein:9, fluid:0, category:"protein"},
+    {name:"Chickpeas (cooked)", unit:"1/2 cup", sodium:6, protein:7, fluid:0, category:"protein"},
+    {name:"Tofu", unit:"1/2 cup", sodium:9, protein:10, fluid:0, category:"protein"},
+    {name:"Edamame", unit:"1/2 cup", sodium:3, protein:8, fluid:0, category:"protein"},
+    {name:"Almonds", unit:"1 oz (23 nuts)", sodium:1, protein:6, fluid:0, category:"protein"},
+    {name:"Walnuts", unit:"1 oz", sodium:1, protein:4, fluid:0, category:"protein"},
+    {name:"Peanut butter", unit:"2 tbsp", sodium:140, protein:8, fluid:0, category:"protein"},
+    {name:"Eggs", unit:"1 large", sodium:70, protein:6, fluid:0, category:"protein"},
+    {name:"Salmon", unit:"3 oz", sodium:50, protein:22, fluid:0, category:"protein"},
+    {name:"Chicken breast, skinless", unit:"3 oz", sodium:63, protein:26, fluid:0, category:"protein"},
+    {name:"Turkey breast", unit:"3 oz", sodium:50, protein:25, fluid:0, category:"protein"},
+    {name:"Tuna, canned in water", unit:"3 oz", sodium:300, protein:20, fluid:0, category:"protein"},
+    // Grains
+    {name:"Quinoa (cooked)", unit:"1 cup", sodium:13, protein:8, fluid:0, category:"grain"},
+    {name:"Oatmeal, plain (cooked)", unit:"1 cup", sodium:2, protein:6, fluid:0, category:"grain"},
+    {name:"Brown rice (cooked)", unit:"1 cup", sodium:10, protein:5, fluid:0, category:"grain"},
+    {name:"Whole wheat bread", unit:"1 slice", sodium:150, protein:4, fluid:0, category:"grain"},
+    {name:"White bread", unit:"1 slice", sodium:170, protein:2, fluid:0, category:"grain"},
+    {name:"Whole wheat pasta (cooked)", unit:"1 cup", sodium:4, protein:7.5, fluid:0, category:"grain"},
+    // Dairy
+    {name:"Greek yogurt, plain low-fat", unit:"1 cup", sodium:80, protein:20, fluid:200, category:"dairy"},
+    {name:"Milk, skim", unit:"1 cup", sodium:100, protein:8, fluid:237, category:"dairy"},
+    {name:"Mozzarella, low-sodium", unit:"1 oz", sodium:100, protein:7, fluid:0, category:"dairy"},
+    // Processed / high-sodium
+    {name:"Bacon", unit:"2 slices", sodium:370, protein:6, fluid:0, category:"processed"},
+    {name:"Sausage link", unit:"1 link", sodium:380, protein:5, fluid:0, category:"processed"},
+    {name:"Deli ham", unit:"2 oz", sodium:640, protein:10, fluid:0, category:"processed"},
+    {name:"Hot dog", unit:"1", sodium:570, protein:6, fluid:0, category:"processed"},
+    {name:"Canned soup", unit:"1 cup", sodium:800, protein:4, fluid:237, category:"processed"},
+    {name:"Pickle spear", unit:"1 spear", sodium:300, protein:0, fluid:0, category:"processed"},
+    {name:"Frozen pizza", unit:"1 slice", sodium:640, protein:12, fluid:0, category:"processed"},
+    {name:"Potato chips", unit:"1 oz", sodium:170, protein:2, fluid:0, category:"processed"},
+    {name:"Pretzels", unit:"1 oz", sodium:400, protein:3, fluid:0, category:"processed"},
+    // Beverages
+    {name:"Water", unit:"8 oz glass", sodium:0, protein:0, fluid:237, category:"beverage"},
+    {name:"Water bottle", unit:"16.9 oz bottle", sodium:0, protein:0, fluid:500, category:"beverage"},
+    {name:"Coffee, black", unit:"8 oz", sodium:5, protein:0.3, fluid:237, category:"beverage"},
+    {name:"Herbal tea", unit:"8 oz", sodium:2, protein:0, fluid:237, category:"beverage"},
+    {name:"Sparkling water", unit:"12 oz can", sodium:10, protein:0, fluid:355, category:"beverage"},
+  ];
+
+  const LOG_KEY = "pkdFoodLog";
+  const SETTINGS_KEY = "pkdSettings";
+  let foodLog = {};
+  let settings = { weight: null, unit: "lb" };
+  try { foodLog = JSON.parse(localStorage.getItem(LOG_KEY)) || {}; } catch(e) { foodLog = {}; }
+  try { settings = Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch(e) {}
+
+  function saveLog(){ localStorage.setItem(LOG_KEY, JSON.stringify(foodLog)); }
+  function saveSettings(){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
+
+  function todayKey(){
+    const d = new Date();
+    return d.toISOString().slice(0,10);
+  }
+
+  let currentDate = todayKey();
+
+  function proteinTargetGrams(){
+    if(!settings.weight) return null;
+    const kg = settings.unit === "lb" ? settings.weight / 2.20462 : settings.weight;
+    return Math.round(kg * 0.8);
+  }
+
+  // Settings UI
+  const weightInput = document.getElementById('weightInput');
+  const weightUnit = document.getElementById('weightUnit');
+  const proteinTargetDisplay = document.getElementById('proteinTargetDisplay');
+  if(settings.weight){ weightInput.value = settings.weight; }
+  weightUnit.value = settings.unit;
+
+  function refreshProteinTargetDisplay(){
+    const t = proteinTargetGrams();
+    proteinTargetDisplay.textContent = t ? `${t}g/day (0.8g/kg)` : "— set weight";
+  }
+  refreshProteinTargetDisplay();
+
+  weightInput.addEventListener('input', ()=>{
+    settings.weight = parseFloat(weightInput.value) || null;
+    saveSettings();
+    refreshProteinTargetDisplay();
+    renderTotals();
+  });
+  weightUnit.addEventListener('change', ()=>{
+    settings.unit = weightUnit.value;
+    saveSettings();
+    refreshProteinTargetDisplay();
+    renderTotals();
+  });
+
+  // Sub tabs (Today's log / History)
+  document.querySelectorAll('.subtab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.subview').forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.sub).classList.add('active');
+      if(btn.dataset.sub === 'historyview') renderHistory();
+    });
+  });
+
+  // Date nav
+  const logDateInput = document.getElementById('logDate');
+  logDateInput.value = currentDate;
+  logDateInput.addEventListener('change', ()=>{
+    currentDate = logDateInput.value || todayKey();
+    renderLog(); renderTotals();
+  });
+  document.getElementById('prevDay').addEventListener('click', ()=>{
+    const d = new Date(currentDate); d.setDate(d.getDate()-1);
+    currentDate = d.toISOString().slice(0,10);
+    logDateInput.value = currentDate;
+    renderLog(); renderTotals();
+  });
+  document.getElementById('nextDay').addEventListener('click', ()=>{
+    const d = new Date(currentDate); d.setDate(d.getDate()+1);
+    currentDate = d.toISOString().slice(0,10);
+    logDateInput.value = currentDate;
+    renderLog(); renderTotals();
+  });
+  document.getElementById('todayBtn').addEventListener('click', ()=>{
+    currentDate = todayKey();
+    logDateInput.value = currentDate;
+    renderLog(); renderTotals();
+  });
+
+  // Search
+  let stagedFood = null;
+  const searchInput = document.getElementById('foodSearch');
+  const searchResults = document.getElementById('searchResults');
+  const stagedArea = document.getElementById('stagedArea');
+  searchInput.addEventListener('input', ()=>{
+    const q = searchInput.value.trim().toLowerCase();
+    searchResults.innerHTML = '';
+    if(!q){ searchResults.style.display='none'; return; }
+    const matches = FOODS.filter(f=>f.name.toLowerCase().includes(q)).slice(0,8);
+    if(!matches.length){ searchResults.style.display='none'; return; }
+    searchResults.style.display='block';
+    matches.forEach(f=>{
+      const row = document.createElement('div');
+      row.innerHTML = `<span>${f.name}</span><span class="meta">${f.unit} · ${f.sodium}mg Na · ${f.protein}g pro</span>`;
+      row.addEventListener('click', ()=>{
+        stagedFood = f;
+        document.getElementById('stagedName').textContent = f.name;
+        document.getElementById('stagedMeta').textContent = `${f.unit} · ${f.sodium}mg sodium · ${f.protein}g protein${f.fluid?` · ${f.fluid}mL fluid`:''}`;
+        stagedArea.style.display = 'flex';
+        searchResults.innerHTML=''; searchResults.style.display='none';
+        searchInput.value = '';
+      });
+      searchResults.appendChild(row);
+    });
+  });
+
+  document.getElementById('addStagedBtn').addEventListener('click', ()=>{
+    if(!stagedFood) return;
+    const qty = parseFloat(document.getElementById('stagedQty').value) || 1;
+    addLogEntry({
+      name: stagedFood.name, unit: stagedFood.unit, qty,
+      sodium: stagedFood.sodium, protein: stagedFood.protein, fluid: stagedFood.fluid,
+      category: stagedFood.category
+    });
+    stagedFood = null;
+    stagedArea.style.display = 'none';
+    document.getElementById('stagedQty').value = 1;
+  });
+
+  document.getElementById('addCustomBtn').addEventListener('click', ()=>{
+    const name = document.getElementById('customName').value.trim();
+    if(!name){ alert('Enter a food name first.'); return; }
+    const sodium = parseFloat(document.getElementById('customSodium').value) || 0;
+    const protein = parseFloat(document.getElementById('customProtein').value) || 0;
+    const fluid = parseFloat(document.getElementById('customFluid').value) || 0;
+    const category = document.getElementById('customCategory').value;
+    addLogEntry({ name, unit:'custom', qty:1, sodium, protein, fluid, category });
+    document.getElementById('customName').value = '';
+    document.getElementById('customSodium').value = '';
+    document.getElementById('customProtein').value = '';
+    document.getElementById('customFluid').value = '';
+  });
+
+  function addLogEntry(entry){
+    if(!foodLog[currentDate]) foodLog[currentDate] = [];
+    entry.id = Date.now() + Math.random().toString(36).slice(2,7);
+    foodLog[currentDate].push(entry);
+    saveLog();
+    renderLog();
+    renderTotals();
+  }
+
+  function removeLogEntry(id){
+    if(!foodLog[currentDate]) return;
+    foodLog[currentDate] = foodLog[currentDate].filter(e=>e.id!==id);
+    saveLog();
+    renderLog();
+    renderTotals();
+  }
+
+  function renderLog(){
+    const entries = foodLog[currentDate] || [];
+    const tbody = document.querySelector('#logTable tbody');
+    tbody.innerHTML = '';
+    document.getElementById('emptyNote').style.display = entries.length ? 'none' : 'block';
+    entries.forEach(e=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${e.name}${e.qty!==1?` ×${e.qty}`:''}</td>
+        <td>${Math.round(e.sodium*e.qty)}mg Na</td>
+        <td>${(e.protein*e.qty).toFixed(1)}g pro</td>
+        <td>${e.fluid ? Math.round(e.fluid*e.qty)+'mL' : '—'}</td>
+        <td><button data-id="${e.id}" title="Remove">✕</button></td>`;
+      tr.querySelector('button').addEventListener('click', ()=>removeLogEntry(e.id));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function computeTotals(dateKey){
+    const entries = foodLog[dateKey] || [];
+    let sodium=0, protein=0, fluid=0, produce=0;
+    entries.forEach(e=>{
+      sodium += e.sodium * e.qty;
+      protein += e.protein * e.qty;
+      fluid += e.fluid * e.qty;
+      if(e.category === 'produce') produce += e.qty;
+    });
+    return {sodium, protein, fluid, produce};
+  }
+
+  function renderTotals(){
+    const t = computeTotals(currentDate);
+    const proteinTarget = proteinTargetGrams();
+    const bar = document.getElementById('totalsBar');
+    const sodiumOver = t.sodium > 2300;
+    const proteinOk = proteinTarget ? t.protein >= proteinTarget*0.9 : false;
+    const fluidOk = t.fluid >= 3000;
+    const produceOk = t.produce >= 5;
+    bar.innerHTML = `
+      <div class="total-card ${sodiumOver?'over':'good'}"><div class="val">${Math.round(t.sodium)}mg</div><div class="lbl">Sodium / 2300mg</div></div>
+      <div class="total-card ${proteinOk?'good':''}"><div class="val">${t.protein.toFixed(1)}g</div><div class="lbl">Protein${proteinTarget?` / ${proteinTarget}g`:''}</div></div>
+      <div class="total-card ${fluidOk?'good':''}"><div class="val">${(t.fluid/1000).toFixed(2)}L</div><div class="lbl">Fluid / 3.0L</div></div>
+      <div class="total-card ${produceOk?'good':''}"><div class="val">${t.produce}</div><div class="lbl">Produce / 5 servings</div></div>
+    `;
+  }
+
+  function renderHistory(){
+    const dates = Object.keys(foodLog).filter(d=>foodLog[d] && foodLog[d].length).sort().reverse();
+    const body = document.getElementById('historyBody');
+    body.innerHTML = '';
+    document.getElementById('historyEmptyNote').style.display = dates.length ? 'none' : 'block';
+    const proteinTarget = proteinTargetGrams();
+    dates.forEach(d=>{
+      const t = computeTotals(d);
+      const tr = document.createElement('tr');
+      const sodiumClass = t.sodium <= 2300 ? 'pass' : 'fail';
+      const proteinClass = proteinTarget ? (t.protein >= proteinTarget*0.9 ? 'pass':'fail') : '';
+      const fluidClass = t.fluid >= 3000 ? 'pass':'fail';
+      const produceClass = t.produce >= 5 ? 'pass':'fail';
+      tr.innerHTML = `<td>${d}</td>
+        <td class="${sodiumClass}">${Math.round(t.sodium)}mg</td>
+        <td class="${proteinClass}">${t.protein.toFixed(1)}g</td>
+        <td class="${fluidClass}">${(t.fluid/1000).toFixed(2)}L</td>
+        <td class="${produceClass}">${t.produce}</td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  renderLog();
+  renderTotals();
+</script>
+
+</body>
+</html>

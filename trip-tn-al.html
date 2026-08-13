@@ -23,6 +23,8 @@
     --warn: #d4a87e;
   }
 
+  html { font-size: 21px; }
+
   html, body { min-height: 100%; width: 100%; }
 
   body {
@@ -60,7 +62,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-weight: 300;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: var(--text-mid);
     letter-spacing: 0.04em;
     text-decoration: none;
@@ -75,7 +77,7 @@
   .wordmark em { color: var(--accent); font-style: normal; }
 
   .header-label {
-    font-size: 0.62rem;
+    font-size: 0.8rem;
     font-weight: 400;
     letter-spacing: 0.24em;
     text-transform: uppercase;
@@ -105,7 +107,7 @@
 
   .subtitle {
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.92rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -129,7 +131,7 @@
   }
 
   .quickref-heading {
-    font-size: 0.64rem;
+    font-size: 0.82rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -141,16 +143,16 @@
     justify-content: space-between;
     align-items: baseline;
     gap: 1rem;
-    padding: 0.55rem 0;
+    padding: 0.65rem 0;
     border-bottom: 1px solid rgba(26, 58, 92, 0.4);
-    font-size: 0.88rem;
+    font-size: 1.05rem;
   }
 
   .quickref-row:last-child { border-bottom: none; }
 
   .quickref-row .label {
     color: var(--text-mid);
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     letter-spacing: 0.04em;
   }
 
@@ -160,6 +162,69 @@
   }
 
   .placeholder { color: var(--warn); font-style: italic; }
+
+  /* ── Edit mode ── */
+  .editable.editing {
+    outline: 1px dashed var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+    cursor: text;
+  }
+
+  .edit-bar {
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 30;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .edit-btn, .edit-reset {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+    color: var(--surface);
+    background: rgba(15, 34, 64, 0.9);
+    border: 1px solid var(--depth-3);
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .edit-btn:hover, .edit-reset:hover { border-color: var(--accent); }
+
+  .edit-btn.active { background: var(--accent); color: var(--depth-1); border-color: var(--accent); }
+
+  .edit-reset {
+    display: none;
+    width: 2.3rem;
+    padding: 0.6rem 0;
+    text-align: center;
+  }
+
+  body.edit-mode .edit-reset { display: block; }
+
+  .edit-hint {
+    position: fixed;
+    bottom: 4.9rem;
+    right: 1.4rem;
+    z-index: 30;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    background: rgba(15, 34, 64, 0.85);
+    border: 1px solid var(--depth-3);
+    border-radius: 4px;
+    padding: 0.5rem 0.8rem;
+    max-width: 230px;
+    text-align: right;
+    display: none;
+  }
+
+  body.edit-mode .edit-hint { display: block; }
 
   /* ── Timeline ── */
   .timeline {
@@ -187,13 +252,13 @@
   .day-date {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 1.35rem;
+    font-size: 1.55rem;
     color: var(--surface);
     letter-spacing: 0.02em;
   }
 
   .day-loc {
-    font-size: 0.66rem;
+    font-size: 0.85rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--accent);
@@ -213,9 +278,9 @@
 
   .item-icon {
     flex-shrink: 0;
-    width: 26px;
+    width: 30px;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     opacity: 0.85;
     margin-top: 0.05rem;
   }
@@ -223,16 +288,16 @@
   .item-body { flex: 1; }
 
   .item-title {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     color: var(--surface);
     line-height: 1.4;
   }
 
   .item-sub {
-    font-size: 0.76rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
     line-height: 1.5;
-    margin-top: 0.15rem;
+    margin-top: 0.2rem;
   }
 
   .item-sub a { color: var(--text-mid); }
@@ -246,15 +311,15 @@
   }
 
   .hotel-name {
-    font-size: 0.88rem;
+    font-size: 1.08rem;
     color: var(--surface);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.35rem;
   }
 
   .hotel-line {
-    font-size: 0.76rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   .hotel-line span.k {
@@ -268,7 +333,7 @@
     z-index: 10;
     text-align: center;
     padding: 1.5rem;
-    font-size: 0.62rem;
+    font-size: 0.8rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -293,31 +358,31 @@
 </header>
 
 <main>
-  <div class="title">Tennessee &amp; Alabama</div>
-  <div class="subtitle">Tue Aug 18 – Fri Aug 21, 2026</div>
+  <div class="title editable" data-key="title">Tennessee &amp; Alabama</div>
+  <div class="subtitle editable" data-key="subtitle">Tue Aug 18 – Fri Aug 21, 2026</div>
   <div class="divider"></div>
 
   <div class="quickref">
     <div class="quickref-heading">Quick Reference</div>
     <div class="quickref-row">
       <span class="label">Flight in</span>
-      <span class="value placeholder">[flight # / time — arrives Memphis, Tue Aug 18]</span>
+      <span class="value placeholder editable" data-key="qr-flight-in">[flight # / time — arrives Memphis, Tue Aug 18]</span>
     </div>
     <div class="quickref-row">
       <span class="label">Flight out</span>
-      <span class="value placeholder">[flight # — departs Memphis 12:00 PM, Fri Aug 21]</span>
+      <span class="value placeholder editable" data-key="qr-flight-out">[flight # — departs Memphis 12:00 PM, Fri Aug 21]</span>
     </div>
     <div class="quickref-row">
       <span class="label">Night of 18th</span>
-      <span class="value">AC Hotel Tuscaloosa</span>
+      <span class="value editable" data-key="qr-night18">AC Hotel Tuscaloosa</span>
     </div>
     <div class="quickref-row">
       <span class="label">Night of 19th</span>
-      <span class="value">SpringHill Suites Mobile</span>
+      <span class="value editable" data-key="qr-night19">SpringHill Suites Mobile</span>
     </div>
     <div class="quickref-row">
       <span class="label">Night of 20th</span>
-      <span class="value">Holiday Inn Express Memphis/Germantown</span>
+      <span class="value editable" data-key="qr-night20">Holiday Inn Express Memphis/Germantown</span>
     </div>
   </div>
 
@@ -334,25 +399,25 @@
           <div class="item-icon">✈️</div>
           <div class="item-body">
             <div class="item-title">Fly into Memphis, TN</div>
-            <div class="item-sub placeholder">[flight #, airline, arrival time]</div>
+            <div class="item-sub placeholder editable" data-key="d1-flight-sub">[flight #, airline, arrival time]</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🚗</div>
           <div class="item-body">
             <div class="item-title">Drive to Tuscaloosa, AL</div>
-            <div class="item-sub">Afternoon — approx. 4–4.5 hr drive</div>
+            <div class="item-sub editable" data-key="d1-drive-sub">Afternoon — approx. 4–4.5 hr drive</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🏨</div>
           <div class="item-body">
             <div class="hotel-block">
-              <div class="hotel-name">AC Hotel Tuscaloosa</div>
-              <div class="hotel-line"><span class="k">Address</span> — 2585 6th St, Tuscaloosa, AL 35401</div>
-              <div class="hotel-line"><span class="k">Phone</span> — (205) 374-8080</div>
-              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder">[add here]</span></div>
-              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder">[time]</span></div>
+              <div class="hotel-name editable" data-key="d1-hotel-name">AC Hotel Tuscaloosa</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d1-hotel-address">2585 6th St, Tuscaloosa, AL 35401</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d1-hotel-phone">(205) 374-8080</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d1-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d1-hotel-checkin">[time]</span></div>
             </div>
           </div>
         </div>
@@ -370,25 +435,25 @@
           <div class="item-icon">🤝</div>
           <div class="item-body">
             <div class="item-title">Meeting — Tuscaloosa</div>
-            <div class="item-sub placeholder">[morning, location/time]</div>
+            <div class="item-sub placeholder editable" data-key="d2-meeting-sub">[morning, location/time]</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🚗</div>
           <div class="item-body">
             <div class="item-title">Drive to Mobile, AL</div>
-            <div class="item-sub">Approx. 3.5–4 hr drive</div>
+            <div class="item-sub editable" data-key="d2-drive-sub">Approx. 3.5–4 hr drive</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🏨</div>
           <div class="item-body">
             <div class="hotel-block">
-              <div class="hotel-name">SpringHill Suites by Marriott — Mobile</div>
-              <div class="hotel-line"><span class="k">Address</span> — 3655 Springhill Memorial Dr N, Mobile, AL 36608</div>
-              <div class="hotel-line"><span class="k">Phone</span> — (251) 378-3800</div>
-              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder">[add here]</span></div>
-              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder">[time]</span></div>
+              <div class="hotel-name editable" data-key="d2-hotel-name">SpringHill Suites by Marriott — Mobile</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d2-hotel-address">3655 Springhill Memorial Dr N, Mobile, AL 36608</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d2-hotel-phone">(251) 378-3800</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d2-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d2-hotel-checkin">[time]</span></div>
             </div>
           </div>
         </div>
@@ -406,25 +471,25 @@
           <div class="item-icon">🤝</div>
           <div class="item-body">
             <div class="item-title">Meeting — Mobile</div>
-            <div class="item-sub placeholder">[morning, location/time]</div>
+            <div class="item-sub placeholder editable" data-key="d3-meeting-sub">[morning, location/time]</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🚗</div>
           <div class="item-body">
             <div class="item-title">Drive back to Memphis, TN</div>
-            <div class="item-sub">Approx. 6.5–7 hr drive</div>
+            <div class="item-sub editable" data-key="d3-drive-sub">Approx. 6.5–7 hr drive</div>
           </div>
         </div>
         <div class="item">
           <div class="item-icon">🏨</div>
           <div class="item-body">
             <div class="hotel-block">
-              <div class="hotel-name">Holiday Inn Express Hotel &amp; Suites Memphis/Germantown by IHG</div>
-              <div class="hotel-line"><span class="k">Address</span> — 7784 Wolf Trail Cv, Germantown, TN 38138</div>
-              <div class="hotel-line"><span class="k">Phone</span> — (901) 309-6700</div>
-              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder">[add here]</span></div>
-              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder">[time]</span></div>
+              <div class="hotel-name editable" data-key="d3-hotel-name">Holiday Inn Express Hotel &amp; Suites Memphis/Germantown by IHG</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d3-hotel-address">7784 Wolf Trail Cv, Germantown, TN 38138</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d3-hotel-phone">(901) 309-6700</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d3-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d3-hotel-checkin">[time]</span></div>
               <div class="hotel-line"><span class="k">Link</span> — <a href="https://www.booking.com/hotel/us/germantown-7784-wolf-trail-cove.en-us.html" target="_blank" rel="noopener">Booking.com listing</a></div>
             </div>
           </div>
@@ -448,8 +513,8 @@
         <div class="item">
           <div class="item-icon">✈️</div>
           <div class="item-body">
-            <div class="item-title">Fly out of Memphis — 12:00 PM</div>
-            <div class="item-sub placeholder">[flight #, airline]</div>
+            <div class="item-title editable" data-key="d4-flight-title">Fly out of Memphis — 12:00 PM</div>
+            <div class="item-sub placeholder editable" data-key="d4-flight-sub">[flight #, airline]</div>
           </div>
         </div>
       </div>
@@ -460,12 +525,78 @@
 
 <footer>still water &nbsp;·&nbsp; a quiet place</footer>
 
+<div class="edit-hint">Tap any field to edit it, then hit Done to save.</div>
+<div class="edit-bar">
+  <button id="edit-reset" class="edit-reset" title="Reset all fields to defaults">↺</button>
+  <button id="edit-toggle" class="edit-btn">✏️ Edit</button>
+</div>
+
 <script>
   // ── Access check ────────────────────────────────────────
   // TEMP: disabled for local preview. Re-enable before pushing live:
   // if (sessionStorage.getItem('sw-access') !== 'true') {
   //   window.location.replace('/');
   // }
+
+  // ── Edit mode ─────────────────────────────────────────────
+  const STORAGE_KEY = 'sw-trip-tn-al-edits';
+
+  function loadEdits() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  function applyEdits() {
+    const edits = loadEdits();
+    document.querySelectorAll('.editable').forEach(el => {
+      const key = el.dataset.key;
+      if (edits[key] !== undefined && edits[key] !== '') {
+        el.textContent = edits[key];
+        el.classList.remove('placeholder');
+      }
+    });
+  }
+
+  function saveEdits() {
+    const edits = loadEdits();
+    document.querySelectorAll('.editable').forEach(el => {
+      const text = el.textContent.trim();
+      edits[el.dataset.key] = text;
+      el.classList.toggle('placeholder', text.startsWith('[') && text.endsWith(']'));
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }
+
+  applyEdits();
+
+  let editing = false;
+  const editBtn = document.getElementById('edit-toggle');
+  const resetBtn = document.getElementById('edit-reset');
+  const editables = document.querySelectorAll('.editable');
+
+  editBtn.addEventListener('click', () => {
+    editing = !editing;
+    editables.forEach(el => {
+      el.contentEditable = editing;
+      el.classList.toggle('editing', editing);
+    });
+    document.body.classList.toggle('edit-mode', editing);
+    if (editing) {
+      editBtn.textContent = 'Done';
+      editBtn.classList.add('active');
+    } else {
+      saveEdits();
+      editBtn.textContent = '✏️ Edit';
+      editBtn.classList.remove('active');
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    if (confirm('Reset all fields back to their original defaults?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  });
 
   // ── Water animation ─────────────────────────────────────
   const canvas = document.getElementById('water');

@@ -1,1 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimalism Plan — 4 Week Declutter</title>
+<style>
+  :root{
+    --bg:#faf9f7;
+    --paper:#ffffff;
+    --ink:#2b2a28;
+    --muted:#8a8781;
+    --line:#e7e4dd;
+    --accent:#6b7a5e;
+    --accent-soft:#e7ede2;
+    --done:#b9c4ae;
+    --warm:#a8734a;
+    --warm-soft:#f4e9e0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 120px;}
+  header{margin-bottom:40px;}
+  h1{
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+  }
+  .sub{color:var(--muted);font-size:15px;margin:0 0 28px;}
 
+  .overall{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:36px;
+  }
+  .overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .overall-top span:first-child{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .overall-top span:last-child{font-size:14px;color:var(--ink);font-weight:600;}
+  .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--accent);width:0%;transition:width .3s ease;}
+
+  .legend{
+    font-size:13.5px;
+    color:var(--muted);
+    background:var(--accent-soft);
+    border-radius:10px;
+    padding:14px 18px;
+    margin-bottom:40px;
+  }
+  .legend b{color:var(--ink);}
+
+  .week{margin-bottom:48px;}
+  .week-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:18px;
+  }
+  .week-head h2{font-size:18px;margin:0;font-weight:600;}
+  .week-head .wk-pct{font-size:13px;color:var(--muted);}
+
+  .week-intro{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:-10px 0 16px;
+  }
+
+  .day{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-bottom:12px;
+  }
+  .day.warm{
+    border-color:#e6d3c2;
+    background:var(--warm-soft);
+  }
+  .day-title{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  .day-note{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  ul.tasks{list-style:none;margin:0;padding:0;}
+  ul.tasks li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:6px 0;
+    font-size:14.5px;
+  }
+  ul.tasks input[type=checkbox]{
+    margin-top:3px;
+    width:16px;height:16px;
+    accent-color:var(--accent);
+    flex-shrink:0;
+  }
+  .day.warm ul.tasks input[type=checkbox]{accent-color:var(--warm);}
+  ul.tasks label{cursor:pointer;}
+  li.checked label{
+    color:var(--muted);
+    text-decoration:line-through;
+    text-decoration-color:var(--done);
+  }
+
+  .basement-note{
+    background:var(--warm-soft);
+    border:1px solid #e6d3c2;
+    border-radius:10px;
+    padding:18px 20px;
+    font-size:14px;
+    color:#5b4636;
+    margin-bottom:20px;
+  }
+
+  .maintenance{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 24px;
+    margin-top:8px;
+  }
+  .maintenance h2{font-size:18px;margin:0 0 12px;}
+  .maintenance ol{padding-left:20px;margin:0;font-size:14.5px;}
+  .maintenance li{margin-bottom:8px;}
+
+  .controls{
+    text-align:center;
+    margin-top:36px;
+  }
+  button{
+    font-family:inherit;
+    font-size:13px;
+    color:var(--muted);
+    background:none;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:8px 16px;
+    cursor:pointer;
+  }
+  button:hover{border-color:var(--accent);color:var(--accent);}
+
+  @media print{
+    button, .controls{display:none;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Minimalism Plan</h1>
+    <p class="sub">A 4-week, room-by-room decluttering plan for your house. Progress saves automatically in this browser.</p>
+
+    <div class="overall">
+      <div class="overall-top">
+        <span>Overall progress</span>
+        <span id="overall-label">0 / 0</span>
+      </div>
+      <div class="bar"><div class="bar-fill" id="overall-bar"></div></div>
+    </div>
+
+    <div class="legend">
+      <b>Sorting method:</b> touch each item once and sort it into Keep, Donate, Sell, Trash, or Relocate (belongs elsewhere in the house). Don't create a "maybe" pile — maybe means keep, so decide.
+      If you haven't used or worn something in 12 months and it isn't seasonal or sentimental, it's a strong donate/sell candidate.
+    </div>
+  </header>
+
+  <!-- WEEK 1 -->
+  <section class="week" data-week="1">
+    <div class="week-head">
+      <h2>Week 1 — Personal Spaces</h2>
+      <span class="wk-pct" data-wkpct="1">0%</span>
+    </div>
+    <p class="week-intro">Bedroom, closets, guest room, and all three bathrooms.</p>
+
+    <div class="day">
+      <div class="day-title">Day 1 · Bedroom</div>
+      <div class="day-note">Dresser, nightstands, under the bed, and surfaces.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d1t1"><label for="w1d1t1">Clear nightstand tops down to 2–3 items each</label></li>
+        <li><input type="checkbox" id="w1d1t2"><label for="w1d1t2">Empty and sort each dresser drawer</label></li>
+        <li><input type="checkbox" id="w1d1t3"><label for="w1d1t3">Sort under-bed storage</label></li>
+        <li><input type="checkbox" id="w1d1t4"><label for="w1d1t4">Toss expired medication/lotions from nightstands</label></li>
+        <li><input type="checkbox" id="w1d1t5"><label for="w1d1t5">Bag donate items and stage by the door</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 2 · Master closet</div>
+      <div class="day-note">Pull everything out. Try on anything you're unsure of.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d2t1"><label for="w1d2t1">Empty closet completely, wipe down shelves/rod</label></li>
+        <li><input type="checkbox" id="w1d2t2"><label for="w1d2t2">Sort clothes: keep / donate / sell / trash</label></li>
+        <li><input type="checkbox" id="w1d2t3"><label for="w1d2t3">Sort shoes and bags the same way</label></li>
+        <li><input type="checkbox" id="w1d2t4"><label for="w1d2t4">Return only the "keep" items, organized by type</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 3 · Guest room</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d3t1"><label for="w1d3t1">Closet: sort and return only keeps</label></li>
+        <li><input type="checkbox" id="w1d3t2"><label for="w1d3t2">Dresser and drawers</label></li>
+        <li><input type="checkbox" id="w1d3t3"><label for="w1d3t3">Clear surfaces of any storage overflow it's collected</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 4 · Linen closet</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d4t1"><label for="w1d4t1">Cut linens/towels down to a set number per bed/bath</label></li>
+        <li><input type="checkbox" id="w1d4t2"><label for="w1d4t2">Donate extra/mismatched sets</label></li>
+        <li><input type="checkbox" id="w1d4t3"><label for="w1d4t3">Fold and label shelves</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 5 · Bathroom</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d5t1"><label for="w1d5t1">Toss expired medicine, makeup, toiletries</label></li>
+        <li><input type="checkbox" id="w1d5t2"><label for="w1d5t2">Clear counters to daily essentials only</label></li>
+        <li><input type="checkbox" id="w1d5t3"><label for="w1d5t3">Sort under-sink storage</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 6 · Master bathroom</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d6t1"><label for="w1d6t1">Toss expired medicine, makeup, toiletries</label></li>
+        <li><input type="checkbox" id="w1d6t2"><label for="w1d6t2">Clear counters to daily essentials only</label></li>
+        <li><input type="checkbox" id="w1d6t3"><label for="w1d6t3">Sort under-sink and linen storage</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 7 · 1/4 bathroom &amp; donation drop-off</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w1d7t1"><label for="w1d7t1">Clear counter/storage to essentials — should be quick</label></li>
+        <li><input type="checkbox" id="w1d7t2"><label for="w1d7t2">Drop off / schedule pickup for all Week 1 donate bags</label></li>
+        <li><input type="checkbox" id="w1d7t3"><label for="w1d7t3">List sell items online or box them for consignment</label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WEEK 2 -->
+  <section class="week" data-week="2">
+    <div class="week-head">
+      <h2>Week 2 — Kitchen &amp; Common Rooms</h2>
+      <span class="wk-pct" data-wkpct="2">0%</span>
+    </div>
+    <p class="week-intro">Kitchen, pantry, dining room, living room, library, and office.</p>
+
+    <div class="day">
+      <div class="day-title">Day 8 · Kitchen counters &amp; cabinets</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d8t1"><label for="w2d8t1">Clear counters to only daily-use items</label></li>
+        <li><input type="checkbox" id="w2d8t2"><label for="w2d8t2">Sort dishware/glassware — keep enough for household + guests</label></li>
+        <li><input type="checkbox" id="w2d8t3"><label for="w2d8t3">Clear the junk drawer</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 9 · Pantry</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d9t1"><label for="w2d9t1">Check for expired food, consolidate duplicates</label></li>
+        <li><input type="checkbox" id="w2d9t2"><label for="w2d9t2">Donate unopened non-perishables you won't use</label></li>
+        <li><input type="checkbox" id="w2d9t3"><label for="w2d9t3">Group like items and label shelves/bins</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 10 · Kitchen — appliances &amp; gadgets</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d10t1"><label for="w2d10t1">Keep only appliances used in the last year</label></li>
+        <li><input type="checkbox" id="w2d10t2"><label for="w2d10t2">Donate/sell duplicates and single-use gadgets</label></li>
+        <li><input type="checkbox" id="w2d10t3"><label for="w2d10t3">Toss mismatched food storage lids/containers</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 11 · Dining room</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d11t1"><label for="w2d11t1">Sort china cabinet/hutch — keep sets you actually use</label></li>
+        <li><input type="checkbox" id="w2d11t2"><label for="w2d11t2">Clear table of any non-dining storage overflow</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 12 · Living room</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d12t1"><label for="w2d12t1">Clear coffee table / side tables to essentials</label></li>
+        <li><input type="checkbox" id="w2d12t2"><label for="w2d12t2">Sort DVDs/games/cables — recycle unused electronics</label></li>
+        <li><input type="checkbox" id="w2d12t3"><label for="w2d12t3">Remove excess throw pillows/blankets, clear decorative clutter</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 13 · Library</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d13t1"><label for="w2d13t1">Sort books: keep / donate to library / sell</label></li>
+        <li><input type="checkbox" id="w2d13t2"><label for="w2d13t2">Clear shelves of anything that isn't books/reading-related</label></li>
+        <li><input type="checkbox" id="w2d13t3"><label for="w2d13t3">Wipe down shelves as you go</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 14 · Office &amp; donation drop-off</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w2d14t1"><label for="w2d14t1">Clear desktop to essentials, sort supplies</label></li>
+        <li><input type="checkbox" id="w2d14t2"><label for="w2d14t2">Shred/recycle documents you no longer need; file the rest</label></li>
+        <li><input type="checkbox" id="w2d14t3"><label for="w2d14t3">Drop off / schedule pickup for Week 2 donate items</label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WEEK 3 -->
+  <section class="week" data-week="3">
+    <div class="week-head">
+      <h2>Week 3 — Entry &amp; Utility</h2>
+      <span class="wk-pct" data-wkpct="3">0%</span>
+    </div>
+    <p class="week-intro">Mud room, laundry room, and garage — with buffer days built in before the basement.</p>
+
+    <div class="day">
+      <div class="day-title">Day 15 · Mud room</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d15t1"><label for="w3d15t1">Sort coats/shoes — keep current season + one backup</label></li>
+        <li><input type="checkbox" id="w3d15t2"><label for="w3d15t2">Clear the drop zone of accumulated mail and stuff</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 16 · Laundry room</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d16t1"><label for="w3d16t1">Toss empty/near-empty product bottles</label></li>
+        <li><input type="checkbox" id="w3d16t2"><label for="w3d16t2">Sort lost socks/mystery items — donate or discard</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 17 · Garage — tools &amp; sporting goods</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d17t1"><label for="w3d17t1">Sort tools — keep working, donate duplicates</label></li>
+        <li><input type="checkbox" id="w3d17t2"><label for="w3d17t2">Sort sporting/outdoor gear by who still uses it</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 18 · Garage — overflow storage</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d18t1"><label for="w3d18t1">Go through remaining boxes/bins</label></li>
+        <li><input type="checkbox" id="w3d18t2"><label for="w3d18t2">Recycle/trash broken items you've been "meaning to fix"</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 19 · Buffer / catch-up</div>
+      <div class="day-note">Use this for anything from Weeks 1–3 that ran long.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d19t1"><label for="w3d19t1">Finish any unfinished room from the last 3 weeks</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 20 · Donation drop-off &amp; sell listings</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d20t1"><label for="w3d20t1">Drop off / schedule pickup for Week 3 donate items</label></li>
+        <li><input type="checkbox" id="w3d20t2"><label for="w3d20t2">Post or finalize any sell listings</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 21 · Prep for basement week</div>
+      <div class="day-note">The basement gets its own full week starting next — set it up now.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w3d21t1"><label for="w3d21t1">Get supplies: boxes, bins, markers, trash bags, gloves</label></li>
+        <li><input type="checkbox" id="w3d21t2"><label for="w3d21t2">If needed, schedule a donation truck or junk haul-away for the end of next week</label></li>
+        <li><input type="checkbox" id="w3d21t3"><label for="w3d21t3">Rest — next week is a bigger lift</label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WEEK 4 -->
+  <section class="week" data-week="4">
+    <div class="week-head">
+      <h2>Week 4 — The Basement</h2>
+      <span class="wk-pct" data-wkpct="4">0%</span>
+    </div>
+
+    <div class="basement-note">
+      This week is different. A lot of what's down there is your mother's — and that's not the same task as sorting a linen closet. Go in this order deliberately: easy, non-sentimental stuff first to build momentum, then the harder boxes once you've got a rhythm. It's fine to keep more here than you would elsewhere, to go slower than planned, or to ask a sibling or someone close to your mother to go through boxes with you. If a week isn't enough, let it take two — nothing above resets or depends on finishing this on schedule.
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 22 · Walkthrough &amp; mapping</div>
+      <div class="day-note">No decisions yet — just get the lay of the land.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d22t1"><label for="w4d22t1">Walk the whole basement, don't open anything yet</label></li>
+        <li><input type="checkbox" id="w4d22t2"><label for="w4d22t2">Group into rough zones: furniture/large objects, household boxes, your mother's boxes</label></li>
+        <li><input type="checkbox" id="w4d22t3"><label for="w4d22t3">Clear a path and staging area to work in</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 23 · Household &amp; utility boxes</div>
+      <div class="day-note">The easier, non-sentimental stuff — start here to build momentum.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d23t1"><label for="w4d23t1">Sort holiday decor, old paperwork, general storage boxes</label></li>
+        <li><input type="checkbox" id="w4d23t2"><label for="w4d23t2">Keep / donate / trash as you go</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 24 · Furniture &amp; large objects</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d24t1"><label for="w4d24t1">Decide keep / donate / sell / dispose for each large item</label></li>
+        <li><input type="checkbox" id="w4d24t2"><label for="w4d24t2">Confirm haul-away or donation pickup for anything leaving</label></li>
+      </ul>
+    </div>
+
+    <div class="day warm">
+      <div class="day-title">Day 25 · Your mother's boxes — part 1</div>
+      <div class="day-note">One box at a time. Set aside a keepsake bin for anything that matters, no explanation needed.</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d25t1"><label for="w4d25t1">Open boxes one at a time, at whatever pace feels right</label></li>
+        <li><input type="checkbox" id="w4d25t2"><label for="w4d25t2">Start a dedicated keepsake bin — set aside, decide later if unsure</label></li>
+        <li><input type="checkbox" id="w4d25t3"><label for="w4d25t3">It's okay to stop for the day whenever you need to</label></li>
+      </ul>
+    </div>
+
+    <div class="day warm">
+      <div class="day-title">Day 26 · Your mother's boxes — part 2</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d26t1"><label for="w4d26t1">Continue through remaining boxes</label></li>
+        <li><input type="checkbox" id="w4d26t2"><label for="w4d26t2">Consider inviting a sibling or family member to go through anything jointly meaningful</label></li>
+        <li><input type="checkbox" id="w4d26t3"><label for="w4d26t3">Anything genuinely undecided can wait — set it aside rather than forcing a call</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 27 · Final sort &amp; staging</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d27t1"><label for="w4d27t1">Label and consolidate the keep/keepsake bins</label></li>
+        <li><input type="checkbox" id="w4d27t2"><label for="w4d27t2">Stage donate/trash/haul-away items for pickup</label></li>
+        <li><input type="checkbox" id="w4d27t3"><label for="w4d27t3">Final donation drop-off / confirm haul-away</label></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <div class="day-title">Day 28 · Close-out</div>
+      <ul class="tasks">
+        <li><input type="checkbox" id="w4d28t1"><label for="w4d28t1">Sweep the space, confirm everything has a spot or is gone</label></li>
+        <li><input type="checkbox" id="w4d28t2"><label for="w4d28t2">Take "after" photos to compare against day 1</label></li>
+        <li><input type="checkbox" id="w4d28t3"><label for="w4d28t3">Set up the maintenance rules below for the whole house</label></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="maintenance">
+    <h2>Keeping it that way</h2>
+    <ol>
+      <li><b>One in, one out.</b> When something new comes in, something existing leaves.</li>
+      <li><b>12-month rule.</b> If it wasn't used or worn in the past year and isn't seasonal/sentimental, it goes.</li>
+      <li><b>A home for everything.</b> If an item doesn't have a designated spot, it's a candidate to leave.</li>
+      <li><b>Mail &amp; paper — daily.</b> Sort as it arrives; recycle immediately, don't stockpile.</li>
+      <li><b>Quarterly mini-pass.</b> Spend one afternoon every 3 months re-checking closets and the garage before clutter rebuilds.</li>
+    </ol>
+  </div>
+
+  <div class="controls">
+    <button id="reset-btn">Reset all progress</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'declutter-plan-progress';
+  var checkboxes = Array.prototype.slice.call(document.querySelectorAll('ul.tasks input[type=checkbox]'));
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ state = {}; }
+
+  function applyState(){
+    checkboxes.forEach(function(cb){
+      cb.checked = !!state[cb.id];
+      cb.closest('li').classList.toggle('checked', cb.checked);
+    });
+    updateProgress();
+  }
+
+  function updateProgress(){
+    var totalAll = checkboxes.length, doneAll = 0;
+    document.querySelectorAll('.week').forEach(function(weekEl){
+      var wkBoxes = weekEl.querySelectorAll('ul.tasks input[type=checkbox]');
+      var wkDone = 0;
+      wkBoxes.forEach(function(cb){ if(cb.checked) wkDone++; });
+      doneAll += wkDone;
+      var pct = wkBoxes.length ? Math.round(100 * wkDone / wkBoxes.length) : 0;
+      var label = weekEl.querySelector('.wk-pct');
+      if(label) label.textContent = pct + '%';
+    });
+    var overallPct = totalAll ? Math.round(100 * doneAll / totalAll) : 0;
+    document.getElementById('overall-bar').style.width = overallPct + '%';
+    document.getElementById('overall-label').textContent = doneAll + ' / ' + totalAll;
+  }
+
+  checkboxes.forEach(function(cb){
+    cb.addEventListener('change', function(){
+      state[cb.id] = cb.checked;
+      cb.closest('li').classList.toggle('checked', cb.checked);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateProgress();
+    });
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', function(){
+    if(!confirm('Reset all checked progress?')) return;
+    state = {};
+    localStorage.removeItem(STORAGE_KEY);
+    applyState();
+  });
+
+  applyState();
+})();
+</script>
+
+</body>
+</html>

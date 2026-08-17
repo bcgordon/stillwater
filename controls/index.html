@@ -1,1 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Osso VR Controls — still water</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#0a1628" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="still water" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { font-size: 21px; }
+
+  :root {
+    --depth-1: #0a1628;
+    --depth-2: #0f2240;
+    --depth-3: #1a3a5c;
+    --surface: #e8f0f7;
+    --surface-mid: #c5d8e8;
+    --text-mid: #8fb3cc;
+    --text-dim: #4a7a99;
+    --accent: #7eb8d4;
+    --accent-2: #d4a87e;
+  }
+
+  html, body { min-height: 100%; width: 100%; }
+
+  body {
+    background: var(--depth-1);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    color: var(--surface);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.6rem 2rem;
+    border-bottom: 1px solid rgba(26, 58, 92, 0.6);
+  }
+
+  .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.3rem;
+    color: var(--text-mid);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+  }
+
+  .wordmark:hover { color: var(--accent); }
+  .wordmark em { color: var(--accent); font-style: normal; }
+
+  .header-label {
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── Main ── */
+  main {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3.2rem 1.6rem 6rem;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(2rem, 6vw, 2.7rem);
+    color: var(--surface);
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.92rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 0.6rem;
+  }
+
+  .divider {
+    width: 32px;
+    height: 1px;
+    background: var(--depth-3);
+    margin: 1.6rem auto 2rem;
+  }
+
+  .intro {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 0 auto 3rem;
+  }
+
+  .intro strong { color: var(--surface); font-weight: 500; }
+
+  /* ── Cluster cards (WASD / Arrows) ── */
+  .clusters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .cluster {
+    background: rgba(15, 34, 64, 0.55);
+    border: 1px solid var(--depth-3);
+    border-radius: 8px;
+    padding: 1.8rem 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cluster-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+
+  .cluster-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.4rem;
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .key {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 22, 40, 0.7);
+    border: 1px solid var(--depth-3);
+    border-bottom: 3px solid var(--depth-3);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--surface);
+  }
+
+  .key.accent {
+    border-color: var(--accent);
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .key-empty { visibility: hidden; }
+
+  .key-w { grid-column: 2; grid-row: 1; }
+  .key-a { grid-column: 1; grid-row: 2; }
+  .key-s { grid-column: 2; grid-row: 2; }
+  .key-d { grid-column: 3; grid-row: 2; }
+
+  .key-up { grid-column: 2; grid-row: 1; }
+  .key-left { grid-column: 1; grid-row: 2; }
+  .key-down { grid-column: 2; grid-row: 2; }
+  .key-right { grid-column: 3; grid-row: 2; }
+
+  .cluster-legend {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .legend-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.88rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid rgba(26, 58, 92, 0.4);
+  }
+
+  .legend-row:first-child { border-top: none; }
+
+  .legend-key {
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
+
+  .legend-desc { color: var(--text-mid); text-align: right; }
+
+  .cluster-note {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ── Extra keys ── */
+  .section-label {
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    margin: 2.6rem 0 1.2rem;
+  }
+
+  .extras {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .extra-card {
+    background: rgba(15, 34, 64, 0.55);
+    border: 1px solid var(--depth-3);
+    border-radius: 8px;
+    padding: 1.2rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .extra-key {
+    flex-shrink: 0;
+    min-width: 3.2rem;
+    height: 2.6rem;
+    padding: 0 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 22, 40, 0.7);
+    border: 1px solid var(--accent-2);
+    border-bottom: 3px solid var(--accent-2);
+    border-radius: 7px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--accent-2);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .extra-body { display: flex; flex-direction: column; gap: 0.15rem; }
+
+  .extra-title { font-size: 0.95rem; color: var(--surface); }
+  .extra-desc { font-size: 0.78rem; color: var(--text-dim); }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(26, 58, 92, 0.4);
+  }
+
+  @media (max-width: 560px) {
+    header { padding: 1.2rem 1.4rem; }
+    main { padding: 2.6rem 1.2rem 5rem; }
+    .clusters { grid-template-columns: 1fr; }
+    .extras { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="water"></canvas>
+
+<header>
+  <a class="wordmark" href="/">← still <em>water</em></a>
+  <span class="header-label">private</span>
+</header>
+
+<main>
+  <div class="title">Osso VR Controls</div>
+  <div class="subtitle">PC Build — Keyboard Reference</div>
+  <div class="divider"></div>
+
+  <p class="intro"><strong>WASD is your head. Arrow keys are your body.</strong> Everything else is a single key off to the side.</p>
+
+  <div class="clusters">
+
+    <!-- WASD = Head -->
+    <div class="cluster">
+      <div class="cluster-icon">🧑</div>
+      <div class="cluster-label">Head — WASD</div>
+      <div class="keypad">
+        <div class="key key-w">W</div>
+        <div class="key key-a">A</div>
+        <div class="key key-s">S</div>
+        <div class="key key-d">D</div>
+      </div>
+      <div class="cluster-legend">
+        <div class="legend-row">
+          <span class="legend-key">W / S</span>
+          <span class="legend-desc">Tilt head up / down</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-key">A / D</span>
+          <span class="legend-desc">Turn head left / right</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrows = Body -->
+    <div class="cluster">
+      <div class="cluster-icon">🚶</div>
+      <div class="cluster-label">Body — Arrows</div>
+      <div class="keypad">
+        <div class="key key-up">↑</div>
+        <div class="key key-left">←</div>
+        <div class="key key-down">↓</div>
+        <div class="key key-right">→</div>
+      </div>
+      <div class="cluster-note">Move around the room</div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Other Keys</div>
+
+  <div class="extras">
+    <div class="extra-card">
+      <div class="extra-key">Shift</div>
+      <div class="extra-body">
+        <div class="extra-title">Camera up</div>
+        <div class="extra-desc">Raises your view height</div>
+      </div>
+    </div>
+    <div class="extra-card">
+      <div class="extra-key">Ctrl</div>
+      <div class="extra-body">
+        <div class="extra-title">Camera down</div>
+        <div class="extra-desc">Lowers your view height</div>
+      </div>
+    </div>
+    <div class="extra-card">
+      <div class="extra-key">R</div>
+      <div class="extra-body">
+        <div class="extra-title">Reset scenario</div>
+        <div class="extra-desc">Starts the current scenario over</div>
+      </div>
+    </div>
+    <div class="extra-card">
+      <div class="extra-key">Space</div>
+      <div class="extra-body">
+        <div class="extra-title">Skip step</div>
+        <div class="extra-desc">Advances past the current module step</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>still water &nbsp;·&nbsp; a quiet place</footer>
+
+<script>
+  // ── Access check ────────────────────────────────────────
+  if (sessionStorage.getItem('sw-access') !== 'true') {
+    window.location.replace('/');
+  }
+
+  // ── Water animation ─────────────────────────────────────
+  const canvas = document.getElementById('water');
+  const ctx = canvas.getContext('2d');
+  let W, H, ripples = [], time = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function spawnRipple() {
+    ripples.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0,
+      maxR: 80 + Math.random() * 120,
+      speed: 0.4 + Math.random() * 0.3,
+      alpha: 0.18 + Math.random() * 0.12
+    });
+  }
+
+  setInterval(spawnRipple, 2200);
+  spawnRipple();
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#0a1628');
+    grad.addColorStop(0.5, '#0d1e38');
+    grad.addColorStop(1, '#081220');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    time += 0.008;
+    for (let i = 0; i < 5; i++) {
+      const y = H * (0.2 + i * 0.15) + Math.sin(time + i * 1.3) * 18;
+      const bandGrad = ctx.createLinearGradient(0, y - 1, 0, y + 1);
+      bandGrad.addColorStop(0, 'transparent');
+      bandGrad.addColorStop(0.5, `rgba(126,184,212,${0.04 + i * 0.01})`);
+      bandGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = bandGrad;
+      ctx.fillRect(0, y - 1, W, 2);
+    }
+
+    ripples = ripples.filter(rp => rp.alpha > 0.005);
+    ripples.forEach(rp => {
+      rp.r += rp.speed;
+      rp.alpha *= 0.985;
+      ctx.beginPath();
+      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(197, 216, 232, ${rp.alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>

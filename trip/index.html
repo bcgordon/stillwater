@@ -206,6 +206,35 @@
     margin-right: 0.2rem;
   }
 
+  /* ── Notes ── */
+  .notes-section { margin-top: 3rem; }
+
+  .notes-input {
+    width: 100%;
+    min-height: 140px;
+    background: rgba(15, 34, 64, 0.55);
+    border: 1px solid var(--depth-3);
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    color: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+  }
+
+  .notes-input:focus { outline: none; border-color: var(--accent); }
+  .notes-input::placeholder { color: var(--text-dim); }
+
+  .notes-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 0.9rem;
+  }
+
   .edit-reset {
     display: none;
     width: 2.3rem;
@@ -554,6 +583,15 @@
     </div>
 
   </div>
+
+  <div class="notes-section">
+    <div class="quickref-heading">Notes</div>
+    <textarea id="notes-field" class="notes-input" placeholder="Anything else worth jotting down — parking info, gate codes, reminders…"></textarea>
+    <div class="notes-actions">
+      <span id="notes-status" class="sync-status"></span>
+      <button id="notes-save" class="edit-btn">Save notes</button>
+    </div>
+  </div>
 </main>
 
 <footer>still water &nbsp;·&nbsp; a quiet place</footer>
@@ -638,11 +676,17 @@
       edits[el.dataset.key] = text;
       el.classList.toggle('placeholder', text.startsWith('[') && text.endsWith(']'));
     });
+    if (notesField) edits['notes'] = notesField.value;
     return edits;
   }
 
   const syncStatus = document.getElementById('sync-status');
   function setStatus(text) { if (syncStatus) syncStatus.textContent = text; }
+
+  const notesField = document.getElementById('notes-field');
+  const notesStatus = document.getElementById('notes-status');
+  const notesSaveBtn = document.getElementById('notes-save');
+  function setNotesStatus(text) { if (notesStatus) notesStatus.textContent = text; }
 
   // Load: try cloud first, fall back to local cache
   (async () => {
@@ -650,8 +694,21 @@
     const remote = await fetchRemoteEdits();
     const edits = remote || loadLocalEdits();
     applyEdits(edits);
+    if (notesField) notesField.value = edits['notes'] || '';
     setStatus(remote ? 'synced' : 'offline — ' + (lastSyncError || 'unknown error'));
   })();
+
+  if (notesSaveBtn) {
+    notesSaveBtn.addEventListener('click', async () => {
+      notesSaveBtn.disabled = true;
+      setNotesStatus('saving…');
+      const edits = gatherEdits();
+      saveLocalEdits(edits);
+      const ok = await pushRemoteEdits(edits);
+      setNotesStatus(ok ? 'synced' : 'save failed — ' + (lastSyncError || 'unknown error'));
+      notesSaveBtn.disabled = false;
+    });
+  }
 
   let editing = false;
   const editBtn = document.getElementById('edit-toggle');

@@ -3,23 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Osso VR Controls — still water</title>
+<title>Tennessee &amp; Alabama — still water</title>
 <meta name="robots" content="noindex, nofollow" />
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
-<link rel="manifest" href="/site.webmanifest" />
-<meta name="theme-color" content="#0a1628" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="still water" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { font-size: 21px; }
 
   :root {
     --depth-1: #0a1628;
@@ -30,8 +20,10 @@
     --text-mid: #8fb3cc;
     --text-dim: #4a7a99;
     --accent: #7eb8d4;
-    --accent-2: #d4a87e;
+    --warn: #d4a87e;
   }
+
+  html { font-size: 21px; }
 
   html, body { min-height: 100%; width: 100%; }
 
@@ -81,6 +73,7 @@
   }
 
   .wordmark:hover { color: var(--accent); }
+
   .wordmark em { color: var(--accent); font-style: normal; }
 
   .header-label {
@@ -97,16 +90,16 @@
     z-index: 10;
     flex: 1;
     width: 100%;
-    max-width: 720px;
+    max-width: 640px;
     margin: 0 auto;
-    padding: 3.2rem 1.6rem 6rem;
+    padding: 3.5rem 1.6rem 6rem;
   }
 
   .title {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-weight: 300;
-    font-size: clamp(2rem, 6vw, 2.7rem);
+    font-size: clamp(2.1rem, 6vw, 2.9rem);
     color: var(--surface);
     letter-spacing: 0.03em;
     text-align: center;
@@ -115,7 +108,7 @@
   .subtitle {
     text-align: center;
     font-size: 0.92rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-dim);
     margin-top: 0.6rem;
@@ -125,245 +118,250 @@
     width: 32px;
     height: 1px;
     background: var(--depth-3);
-    margin: 1.6rem auto 2rem;
+    margin: 1.6rem auto 2.6rem;
   }
 
-  .intro {
-    text-align: center;
-    font-size: 1rem;
-    color: var(--text-mid);
-    line-height: 1.6;
-    max-width: 460px;
-    margin: 0 auto 3rem;
-  }
-
-  .intro strong { color: var(--surface); font-weight: 500; }
-
-  /* ── Tip callout ── */
-  .tip {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    background: rgba(15, 34, 64, 0.55);
-    border: 1px solid var(--accent-2);
-    border-radius: 8px;
-    padding: 1.3rem 1.4rem;
-    margin-bottom: 2.4rem;
-  }
-
-  .tip-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
-
-  .tip-title {
-    font-size: 0.95rem;
-    color: var(--surface);
-    font-weight: 500;
-    margin-bottom: 0.8rem;
-  }
-
-  .tip-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  .tip-step {
-    font-size: 0.86rem;
-    color: var(--text-mid);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    line-height: 1.5;
-  }
-
-  .step-num {
-    flex-shrink: 0;
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 50%;
-    background: rgba(212, 168, 126, 0.15);
-    border: 1px solid var(--accent-2);
-    color: var(--accent-2);
-    font-size: 0.7rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .tip-keys {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    margin: 0 0.1rem;
-  }
-
-  .key-mini {
-    padding: 0.15rem 0.55rem;
-    background: rgba(10, 22, 40, 0.7);
-    border: 1px solid var(--accent-2);
-    border-bottom: 2px solid var(--accent-2);
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--accent-2);
-  }
-
-  .key-plus { color: var(--text-dim); font-size: 0.8rem; }
-
-  /* ── Cluster cards (WASD / Arrows) ── */
-  .clusters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.4rem;
-    margin-bottom: 1.4rem;
-  }
-
-  .cluster {
+  /* ── Quick reference ── */
+  .quickref {
     background: rgba(15, 34, 64, 0.55);
     border: 1px solid var(--depth-3);
-    border-radius: 8px;
-    padding: 1.8rem 1.4rem 1.6rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    border-radius: 3px;
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 3rem;
   }
 
-  .cluster-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
-
-  .cluster-label {
-    font-size: 0.9rem;
-    letter-spacing: 0.16em;
+  .quickref-heading {
+    font-size: 0.82rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.4rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
   }
 
-  .keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1.3rem;
-  }
-
-  .key {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 22, 40, 0.7);
-    border: 1px solid var(--depth-3);
-    border-bottom: 3px solid var(--depth-3);
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 1.15rem;
-    color: var(--surface);
-  }
-
-  .key.accent {
-    border-color: var(--accent);
-    border-bottom-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .key-empty { visibility: hidden; }
-
-  .key-q { grid-column: 1; grid-row: 1; }
-  .key-w { grid-column: 2; grid-row: 1; }
-  .key-e { grid-column: 3; grid-row: 1; }
-  .key-a { grid-column: 1; grid-row: 2; }
-  .key-s { grid-column: 2; grid-row: 2; }
-  .key-d { grid-column: 3; grid-row: 2; }
-
-  .key-up { grid-column: 2; grid-row: 1; }
-  .key-left { grid-column: 1; grid-row: 2; }
-  .key-down { grid-column: 2; grid-row: 2; }
-  .key-right { grid-column: 3; grid-row: 2; }
-
-  .cluster-legend {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .legend-row {
+  .quickref-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    font-size: 0.88rem;
-    padding: 0.4rem 0;
-    border-top: 1px solid rgba(26, 58, 92, 0.4);
-  }
-
-  .legend-row:first-child { border-top: none; }
-
-  .legend-key {
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: 0.03em;
-  }
-
-  .legend-desc { color: var(--text-mid); text-align: right; }
-
-  .cluster-note {
-    font-size: 0.85rem;
-    color: var(--text-mid);
-    text-align: center;
-    line-height: 1.5;
-  }
-
-  /* ── Extra keys ── */
-  .section-label {
-    font-size: 0.82rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    text-align: center;
-    margin: 2.6rem 0 1.2rem;
-  }
-
-  .extras {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid rgba(26, 58, 92, 0.4);
+    font-size: 1.05rem;
   }
 
-  .extra-card {
+  .quickref-row:last-child { border-bottom: none; }
+
+  .quickref-row .label {
+    color: var(--text-mid);
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+  }
+
+  .quickref-row .value {
+    color: var(--surface);
+    text-align: right;
+  }
+
+  .placeholder { color: var(--warn); font-style: italic; }
+
+  /* ── Edit mode ── */
+  .editable.editing {
+    outline: 1px dashed var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+    cursor: text;
+  }
+
+  .edit-bar {
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 30;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .edit-btn, .edit-reset {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+    color: var(--surface);
+    background: rgba(15, 34, 64, 0.9);
+    border: 1px solid var(--depth-3);
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .edit-btn:hover, .edit-reset:hover { border-color: var(--accent); }
+
+  .edit-btn.active { background: var(--accent); color: var(--depth-1); border-color: var(--accent); }
+
+  .sync-status {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+    margin-right: 0.2rem;
+  }
+
+  /* ── Notes ── */
+  .notes-section { margin-top: 3rem; }
+
+  .notes-input {
+    width: 100%;
+    min-height: 140px;
     background: rgba(15, 34, 64, 0.55);
     border: 1px solid var(--depth-3);
-    border-radius: 8px;
-    padding: 1.2rem 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+    color: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
   }
 
-  .extra-key {
-    flex-shrink: 0;
-    min-width: 3.2rem;
-    height: 2.6rem;
-    padding: 0 0.6rem;
+  .notes-input:focus { outline: none; border-color: var(--accent); }
+  .notes-input::placeholder { color: var(--text-dim); }
+
+  .notes-actions {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: center;
-    background: rgba(10, 22, 40, 0.7);
-    border: 1px solid var(--accent-2);
-    border-bottom: 3px solid var(--accent-2);
-    border-radius: 7px;
-    font-weight: 600;
+    gap: 0.9rem;
+    margin-top: 0.9rem;
+  }
+
+  .edit-reset {
+    display: none;
+    width: 2.3rem;
+    padding: 0.6rem 0;
+    text-align: center;
+  }
+
+  body.edit-mode .edit-reset { display: block; }
+
+  .edit-hint {
+    position: fixed;
+    bottom: 4.9rem;
+    right: 1.4rem;
+    z-index: 30;
     font-size: 0.85rem;
-    color: var(--accent-2);
-    letter-spacing: 0.02em;
-    white-space: nowrap;
+    color: var(--text-dim);
+    background: rgba(15, 34, 64, 0.85);
+    border: 1px solid var(--depth-3);
+    border-radius: 4px;
+    padding: 0.5rem 0.8rem;
+    max-width: 230px;
+    text-align: right;
+    display: none;
   }
 
-  .extra-body { display: flex; flex-direction: column; gap: 0.15rem; }
+  body.edit-mode .edit-hint { display: block; }
 
-  .extra-title { font-size: 0.95rem; color: var(--surface); }
-  .extra-desc { font-size: 0.78rem; color: var(--text-dim); }
+  /* ── Timeline ── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .day {
+    background: rgba(15, 34, 64, 0.55);
+    border: 1px solid var(--depth-3);
+    border-radius: 3px;
+    padding: 1.5rem 1.6rem;
+  }
+
+  .day-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .day-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.55rem;
+    color: var(--surface);
+    letter-spacing: 0.02em;
+  }
+
+  .day-loc {
+    font-size: 0.85rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .item {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .item-icon {
+    flex-shrink: 0;
+    width: 30px;
+    text-align: center;
+    font-size: 1.15rem;
+    opacity: 0.85;
+    margin-top: 0.05rem;
+  }
+
+  .item-body { flex: 1; }
+
+  .item-title {
+    font-size: 1.1rem;
+    color: var(--surface);
+    line-height: 1.4;
+  }
+
+  .item-sub {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-top: 0.2rem;
+  }
+
+  .item-sub a { color: var(--text-mid); }
+
+  .hotel-block {
+    margin-top: 0.4rem;
+    padding: 0.85rem 1rem;
+    background: rgba(10, 22, 40, 0.5);
+    border-left: 2px solid var(--accent);
+    border-radius: 2px;
+  }
+
+  .hotel-name {
+    font-size: 1.08rem;
+    color: var(--surface);
+    margin-bottom: 0.35rem;
+  }
+
+  .hotel-line {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  .hotel-line span.k {
+    color: var(--text-mid);
+    letter-spacing: 0.06em;
+  }
 
   /* ── Footer ── */
   footer {
@@ -378,11 +376,11 @@
     border-top: 1px solid rgba(26, 58, 92, 0.4);
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 480px) {
     header { padding: 1.2rem 1.4rem; }
     main { padding: 2.6rem 1.2rem 5rem; }
-    .clusters { grid-template-columns: 1fr; }
-    .extras { grid-template-columns: 1fr; }
+    .quickref-row { flex-direction: column; gap: 0.15rem; }
+    .quickref-row .value { text-align: left; }
   }
 </style>
 </head>
@@ -396,111 +394,358 @@
 </header>
 
 <main>
-  <div class="title">Osso VR Controls</div>
-  <div class="subtitle">PC Build — Keyboard Reference</div>
+  <div class="title editable" data-key="title">Tennessee &amp; Alabama</div>
+  <div class="subtitle editable" data-key="subtitle">Tue Aug 18 – Fri Aug 21, 2026</div>
   <div class="divider"></div>
 
-  <p class="intro"><strong>WASD is your head. Arrow keys are your body.</strong> Everything else is a single key off to the side.</p>
-
-  <div class="tip">
-    <div class="tip-icon">🖥️</div>
-    <div class="tip-body">
-      <div class="tip-title">Enable Full Screen — do this before joining</div>
-      <div class="tip-steps">
-        <div class="tip-step"><span class="step-num">1</span> Open the Collab Menu</div>
-        <div class="tip-step"><span class="step-num">2</span> Press <span class="tip-keys"><span class="key-mini">Alt</span><span class="key-plus">+</span><span class="key-mini">Enter</span></span> to enable full screen</div>
-        <div class="tip-step"><span class="step-num">3</span> Then click <strong>Join</strong></div>
-      </div>
+  <div class="quickref">
+    <div class="quickref-heading">Quick Reference</div>
+    <div class="quickref-row">
+      <span class="label">Flight in</span>
+      <span class="value placeholder editable" data-key="qr-flight-in">[flight # / time — arrives Memphis, Tue Aug 18]</span>
+    </div>
+    <div class="quickref-row">
+      <span class="label">Flight out</span>
+      <span class="value placeholder editable" data-key="qr-flight-out">[flight # — departs Memphis 12:00 PM, Fri Aug 21]</span>
+    </div>
+    <div class="quickref-row">
+      <span class="label">Night of 18th</span>
+      <span class="value editable" data-key="qr-night18">AC Hotel Tuscaloosa</span>
+    </div>
+    <div class="quickref-row">
+      <span class="label">Night of 19th</span>
+      <span class="value editable" data-key="qr-night19">SpringHill Suites Mobile</span>
+    </div>
+    <div class="quickref-row">
+      <span class="label">Night of 20th</span>
+      <span class="value editable" data-key="qr-night20">Holiday Inn Express Memphis/Germantown</span>
+    </div>
+    <div class="quickref-row">
+      <span class="label">Rental car</span>
+      <span class="value editable" data-key="qr-rental">Enterprise · Memphis Airport · Conf #76094835</span>
     </div>
   </div>
 
-  <div class="clusters">
+  <div class="timeline">
 
-    <!-- WASD = Head -->
-    <div class="cluster">
-      <div class="cluster-icon">🧑</div>
-      <div class="cluster-label">Head — WASD</div>
-      <div class="keypad">
-        <div class="key key-q">Q</div>
-        <div class="key key-w">W</div>
-        <div class="key key-e">E</div>
-        <div class="key key-a">A</div>
-        <div class="key key-s">S</div>
-        <div class="key key-d">D</div>
+    <!-- Day 1 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-date">Tuesday, Aug 18</div>
+        <div class="day-loc">Memphis → Tuscaloosa</div>
       </div>
-      <div class="cluster-legend">
-        <div class="legend-row">
-          <span class="legend-key">W / S</span>
-          <span class="legend-desc">Tilt head up / down</span>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">✈️</div>
+          <div class="item-body">
+            <div class="item-title">Fly into Memphis, TN</div>
+            <div class="item-sub placeholder editable" data-key="d1-flight-sub">[flight #, airline, arrival time]</div>
+          </div>
         </div>
-        <div class="legend-row">
-          <span class="legend-key">A / D</span>
-          <span class="legend-desc">Turn head left / right</span>
+        <div class="item">
+          <div class="item-icon">🚙</div>
+          <div class="item-body">
+            <div class="hotel-block">
+              <div class="hotel-name editable" data-key="rental-pickup-name">Enterprise — Rental Car Pick-up</div>
+              <div class="hotel-line"><span class="k">Location</span> — <span class="editable" data-key="rental-pickup-location">Memphis International Airport</span></div>
+              <div class="hotel-line"><span class="k">Time</span> — <span class="editable" data-key="rental-pickup-time">Tue, Aug 18 · 11:30 AM</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="editable" data-key="rental-conf">76094835</span></div>
+            </div>
+          </div>
         </div>
-        <div class="legend-row">
-          <span class="legend-key">Q / E</span>
-          <span class="legend-desc">Adjust head angle</span>
+        <div class="item">
+          <div class="item-icon">🚗</div>
+          <div class="item-body">
+            <div class="item-title">Drive to Tuscaloosa, AL</div>
+            <div class="item-sub editable" data-key="d1-drive-sub">Afternoon — approx. 4–4.5 hr drive</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🏨</div>
+          <div class="item-body">
+            <div class="hotel-block">
+              <div class="hotel-name editable" data-key="d1-hotel-name">AC Hotel Tuscaloosa</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d1-hotel-address">2585 6th St, Tuscaloosa, AL 35401</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d1-hotel-phone">(205) 374-8080</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d1-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d1-hotel-checkin">[time]</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Arrows = Body -->
-    <div class="cluster">
-      <div class="cluster-icon">🚶</div>
-      <div class="cluster-label">Body — Arrows</div>
-      <div class="keypad">
-        <div class="key key-up">↑</div>
-        <div class="key key-left">←</div>
-        <div class="key key-down">↓</div>
-        <div class="key key-right">→</div>
+    <!-- Day 2 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-date">Wednesday, Aug 19</div>
+        <div class="day-loc">Tuscaloosa → Mobile</div>
       </div>
-      <div class="cluster-note">Move around the room</div>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">🤝</div>
+          <div class="item-body">
+            <div class="item-title">Meeting — Tuscaloosa</div>
+            <div class="item-sub placeholder editable" data-key="d2-meeting-sub">[morning, location/time]</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🚗</div>
+          <div class="item-body">
+            <div class="item-title">Drive to Mobile, AL</div>
+            <div class="item-sub editable" data-key="d2-drive-sub">Approx. 3.5–4 hr drive</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🏨</div>
+          <div class="item-body">
+            <div class="hotel-block">
+              <div class="hotel-name editable" data-key="d2-hotel-name">SpringHill Suites by Marriott — Mobile</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d2-hotel-address">3655 Springhill Memorial Dr N, Mobile, AL 36608</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d2-hotel-phone">(251) 378-3800</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d2-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d2-hotel-checkin">[time]</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-date">Thursday, Aug 20</div>
+        <div class="day-loc">Mobile → Memphis</div>
+      </div>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">🤝</div>
+          <div class="item-body">
+            <div class="item-title">Meeting — Mobile</div>
+            <div class="item-sub placeholder editable" data-key="d3-meeting-sub">[morning, location/time]</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🚗</div>
+          <div class="item-body">
+            <div class="item-title">Drive back to Memphis, TN</div>
+            <div class="item-sub editable" data-key="d3-drive-sub">Approx. 6.5–7 hr drive</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🏨</div>
+          <div class="item-body">
+            <div class="hotel-block">
+              <div class="hotel-name editable" data-key="d3-hotel-name">Holiday Inn Express Hotel &amp; Suites Memphis/Germantown by IHG</div>
+              <div class="hotel-line"><span class="k">Address</span> — <span class="editable" data-key="d3-hotel-address">7784 Wolf Trail Cv, Germantown, TN 38138</span></div>
+              <div class="hotel-line"><span class="k">Phone</span> — <span class="editable" data-key="d3-hotel-phone">(901) 309-6700</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="placeholder editable" data-key="d3-hotel-conf">[add here]</span></div>
+              <div class="hotel-line"><span class="k">Check-in</span> — <span class="placeholder editable" data-key="d3-hotel-checkin">[time]</span></div>
+              <div class="hotel-line"><span class="k">Link</span> — <a href="https://www.booking.com/hotel/us/germantown-7784-wolf-trail-cove.en-us.html" target="_blank" rel="noopener">Booking.com listing</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-date">Friday, Aug 21</div>
+        <div class="day-loc">Memphis</div>
+      </div>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">🧳</div>
+          <div class="item-body">
+            <div class="item-title">Check out, head to airport</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">🚙</div>
+          <div class="item-body">
+            <div class="hotel-block">
+              <div class="hotel-name editable" data-key="rental-return-name">Enterprise — Rental Car Return</div>
+              <div class="hotel-line"><span class="k">Location</span> — <span class="editable" data-key="rental-return-location">Memphis International Airport</span></div>
+              <div class="hotel-line"><span class="k">Time</span> — <span class="editable" data-key="rental-return-time">Fri, Aug 21 · 9:30 AM</span></div>
+              <div class="hotel-line"><span class="k">Confirmation #</span> — <span class="editable" data-key="rental-conf-2">76094835</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-icon">✈️</div>
+          <div class="item-body">
+            <div class="item-title editable" data-key="d4-flight-title">Fly out of Memphis — 12:00 PM</div>
+            <div class="item-sub placeholder editable" data-key="d4-flight-sub">[flight #, airline]</div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <div class="section-label">Other Keys</div>
-
-  <div class="extras">
-    <div class="extra-card">
-      <div class="extra-key">Shift</div>
-      <div class="extra-body">
-        <div class="extra-title">Camera up</div>
-        <div class="extra-desc">Raises your view height</div>
-      </div>
-    </div>
-    <div class="extra-card">
-      <div class="extra-key">Ctrl</div>
-      <div class="extra-body">
-        <div class="extra-title">Camera down</div>
-        <div class="extra-desc">Lowers your view height</div>
-      </div>
-    </div>
-    <div class="extra-card">
-      <div class="extra-key">R</div>
-      <div class="extra-body">
-        <div class="extra-title">Reset scenario</div>
-        <div class="extra-desc">Starts the current scenario over</div>
-      </div>
-    </div>
-    <div class="extra-card">
-      <div class="extra-key">Space</div>
-      <div class="extra-body">
-        <div class="extra-title">Skip step</div>
-        <div class="extra-desc">Advances past the current module step</div>
-      </div>
+  <div class="notes-section">
+    <div class="quickref-heading">Notes</div>
+    <textarea id="notes-field" class="notes-input" placeholder="Anything else worth jotting down — parking info, gate codes, reminders…"></textarea>
+    <div class="notes-actions">
+      <span id="notes-status" class="sync-status"></span>
+      <button id="notes-save" class="edit-btn">Save notes</button>
     </div>
   </div>
 </main>
 
 <footer>still water &nbsp;·&nbsp; a quiet place</footer>
 
+<div class="edit-hint">Tap any field to edit it, then hit Done to save. Changes sync to everyone with this link.</div>
+<div class="edit-bar">
+  <span id="sync-status" class="sync-status"></span>
+  <button id="edit-reset" class="edit-reset" title="Reset all fields to defaults">↺</button>
+  <button id="edit-toggle" class="edit-btn">✏️ Edit</button>
+</div>
+
 <script>
   // ── Access check ────────────────────────────────────────
-  // Disabled: this page is reachable without the hub passcode.
+  // TEMP: disabled for local preview. Re-enable before pushing live:
   // if (sessionStorage.getItem('sw-access') !== 'true') {
   //   window.location.replace('/');
   // }
+
+  // ── Edit mode — shared cloud sync via JSONBin ───────────────
+  const STORAGE_KEY = 'sw-trip-tn-al-edits';        // local cache / offline fallback
+  const JSONBIN_ID = '6a7e02eaf5f4af5e29123af7';
+  const JSONBIN_ACCESS_KEY = '$2a$10$P5UP6NIoqvfOy59e/zjhh.1h0vYAxLd.F1QIVlZ0L46x.uxwRyDvW';
+  const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+  function loadLocalEdits() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  function saveLocalEdits(edits) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }
+
+  let lastSyncError = '';
+
+  async function fetchRemoteEdits() {
+    try {
+      const res = await fetch(`${JSONBIN_URL}/latest`, {
+        headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY, 'X-Bin-Meta': 'false' }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      saveLocalEdits(data);
+      return data;
+    } catch (e) {
+      lastSyncError = e.message || String(e);
+      console.warn('Sync unavailable, showing last saved copy:', e);
+      return null;
+    }
+  }
+
+  async function pushRemoteEdits(edits) {
+    try {
+      const res = await fetch(JSONBIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_ACCESS_KEY },
+        body: JSON.stringify(edits)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return true;
+    } catch (e) {
+      lastSyncError = e.message || String(e);
+      console.warn('Could not sync to cloud, saved locally only:', e);
+      return false;
+    }
+  }
+
+  function applyEdits(edits) {
+    document.querySelectorAll('.editable').forEach(el => {
+      const key = el.dataset.key;
+      if (edits[key] !== undefined && edits[key] !== '') {
+        el.textContent = edits[key];
+        el.classList.remove('placeholder');
+      }
+    });
+  }
+
+  function gatherEdits() {
+    const edits = loadLocalEdits();
+    document.querySelectorAll('.editable').forEach(el => {
+      const text = el.textContent.trim();
+      edits[el.dataset.key] = text;
+      el.classList.toggle('placeholder', text.startsWith('[') && text.endsWith(']'));
+    });
+    if (notesField) edits['notes'] = notesField.value;
+    return edits;
+  }
+
+  const syncStatus = document.getElementById('sync-status');
+  function setStatus(text) { if (syncStatus) syncStatus.textContent = text; }
+
+  const notesField = document.getElementById('notes-field');
+  const notesStatus = document.getElementById('notes-status');
+  const notesSaveBtn = document.getElementById('notes-save');
+  function setNotesStatus(text) { if (notesStatus) notesStatus.textContent = text; }
+
+  // Load: try cloud first, fall back to local cache
+  (async () => {
+    setStatus('syncing…');
+    const remote = await fetchRemoteEdits();
+    const edits = remote || loadLocalEdits();
+    applyEdits(edits);
+    if (notesField) notesField.value = edits['notes'] || '';
+    setStatus(remote ? 'synced' : 'offline — ' + (lastSyncError || 'unknown error'));
+  })();
+
+  if (notesSaveBtn) {
+    notesSaveBtn.addEventListener('click', async () => {
+      notesSaveBtn.disabled = true;
+      setNotesStatus('saving…');
+      const edits = gatherEdits();
+      saveLocalEdits(edits);
+      const ok = await pushRemoteEdits(edits);
+      setNotesStatus(ok ? 'synced' : 'save failed — ' + (lastSyncError || 'unknown error'));
+      notesSaveBtn.disabled = false;
+    });
+  }
+
+  let editing = false;
+  const editBtn = document.getElementById('edit-toggle');
+  const resetBtn = document.getElementById('edit-reset');
+  const editables = document.querySelectorAll('.editable');
+
+  editBtn.addEventListener('click', async () => {
+    editing = !editing;
+    editables.forEach(el => {
+      el.contentEditable = editing;
+      el.classList.toggle('editing', editing);
+    });
+    document.body.classList.toggle('edit-mode', editing);
+    if (editing) {
+      editBtn.textContent = 'Done';
+      editBtn.classList.add('active');
+    } else {
+      editBtn.disabled = true;
+      setStatus('saving…');
+      const edits = gatherEdits();
+      saveLocalEdits(edits);
+      const ok = await pushRemoteEdits(edits);
+      setStatus(ok ? 'synced' : 'save failed — ' + (lastSyncError || 'unknown error'));
+      editBtn.disabled = false;
+      editBtn.textContent = '✏️ Edit';
+      editBtn.classList.remove('active');
+    }
+  });
+
+  resetBtn.addEventListener('click', async () => {
+    if (confirm('Reset all fields back to their original defaults? This clears the shared copy for everyone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      setStatus('resetting…');
+      await pushRemoteEdits({});
+      location.reload();
+    }
+  });
 
   // ── Water animation ─────────────────────────────────────
   const canvas = document.getElementById('water');

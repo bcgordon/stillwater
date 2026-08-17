@@ -139,6 +139,77 @@
 
   .intro strong { color: var(--surface); font-weight: 500; }
 
+  /* ── Tip callout ── */
+  .tip {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: rgba(15, 34, 64, 0.55);
+    border: 1px solid var(--accent-2);
+    border-radius: 8px;
+    padding: 1.3rem 1.4rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .tip-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  .tip-title {
+    font-size: 0.95rem;
+    color: var(--surface);
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+
+  .tip-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .tip-step {
+    font-size: 0.86rem;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    line-height: 1.5;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    background: rgba(212, 168, 126, 0.15);
+    border: 1px solid var(--accent-2);
+    color: var(--accent-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tip-keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0 0.1rem;
+  }
+
+  .key-mini {
+    padding: 0.15rem 0.55rem;
+    background: rgba(10, 22, 40, 0.7);
+    border: 1px solid var(--accent-2);
+    border-bottom: 2px solid var(--accent-2);
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--accent-2);
+  }
+
+  .key-plus { color: var(--text-dim); font-size: 0.8rem; }
+
   /* ── Cluster cards (WASD / Arrows) ── */
   .clusters {
     display: grid;
@@ -199,7 +270,9 @@
 
   .key-empty { visibility: hidden; }
 
+  .key-q { grid-column: 1; grid-row: 1; }
   .key-w { grid-column: 2; grid-row: 1; }
+  .key-e { grid-column: 3; grid-row: 1; }
   .key-a { grid-column: 1; grid-row: 2; }
   .key-s { grid-column: 2; grid-row: 2; }
   .key-d { grid-column: 3; grid-row: 2; }
@@ -329,6 +402,18 @@
 
   <p class="intro"><strong>WASD is your head. Arrow keys are your body.</strong> Everything else is a single key off to the side.</p>
 
+  <div class="tip">
+    <div class="tip-icon">🖥️</div>
+    <div class="tip-body">
+      <div class="tip-title">Enable Full Screen — do this before joining</div>
+      <div class="tip-steps">
+        <div class="tip-step"><span class="step-num">1</span> Open the Collab Menu</div>
+        <div class="tip-step"><span class="step-num">2</span> Press <span class="tip-keys"><span class="key-mini">Alt</span><span class="key-plus">+</span><span class="key-mini">Enter</span></span> to enable full screen</div>
+        <div class="tip-step"><span class="step-num">3</span> Then click <strong>Join</strong></div>
+      </div>
+    </div>
+  </div>
+
   <div class="clusters">
 
     <!-- WASD = Head -->
@@ -336,7 +421,9 @@
       <div class="cluster-icon">🧑</div>
       <div class="cluster-label">Head — WASD</div>
       <div class="keypad">
+        <div class="key key-q">Q</div>
         <div class="key key-w">W</div>
+        <div class="key key-e">E</div>
         <div class="key key-a">A</div>
         <div class="key key-s">S</div>
         <div class="key key-d">D</div>
@@ -349,6 +436,10 @@
         <div class="legend-row">
           <span class="legend-key">A / D</span>
           <span class="legend-desc">Turn head left / right</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-key">Q / E</span>
+          <span class="legend-desc">Adjust head angle</span>
         </div>
       </div>
     </div>

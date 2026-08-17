@@ -587,16 +587,19 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
   }
 
+  let lastSyncError = '';
+
   async function fetchRemoteEdits() {
     try {
       const res = await fetch(`${JSONBIN_URL}/latest`, {
         headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY, 'X-Bin-Meta': 'false' }
       });
-      if (!res.ok) throw new Error('read failed: ' + res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       saveLocalEdits(data);
       return data;
     } catch (e) {
+      lastSyncError = e.message || String(e);
       console.warn('Sync unavailable, showing last saved copy:', e);
       return null;
     }
@@ -609,9 +612,10 @@
         headers: { 'Content-Type': 'application/json', 'X-Access-Key': JSONBIN_ACCESS_KEY },
         body: JSON.stringify(edits)
       });
-      if (!res.ok) throw new Error('save failed: ' + res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       return true;
     } catch (e) {
+      lastSyncError = e.message || String(e);
       console.warn('Could not sync to cloud, saved locally only:', e);
       return false;
     }
@@ -646,7 +650,7 @@
     const remote = await fetchRemoteEdits();
     const edits = remote || loadLocalEdits();
     applyEdits(edits);
-    setStatus(remote ? 'synced' : 'offline — showing last saved copy');
+    setStatus(remote ? 'synced' : 'offline — ' + (lastSyncError || 'unknown error'));
   })();
 
   let editing = false;
@@ -670,7 +674,7 @@
       const edits = gatherEdits();
       saveLocalEdits(edits);
       const ok = await pushRemoteEdits(edits);
-      setStatus(ok ? 'synced' : 'saved locally — will retry sync next visit');
+      setStatus(ok ? 'synced' : 'save failed — ' + (lastSyncError || 'unknown error'));
       editBtn.disabled = false;
       editBtn.textContent = '✏️ Edit';
       editBtn.classList.remove('active');

@@ -1,1 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Low Bar</title>
+<style>
+  :root{
+    --bg: #1B2320;
+    --card: #232D28;
+    --card-done: #2A3B31;
+    --text: #EDE8DD;
+    --text-dim: #93A399;
+    --sage: #8FA98C;
+    --clay: #C77B56;
+    --line: #354039;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh;
+    padding:20px 14px 60px;
+  }
+  .wrap{ max-width:460px; margin:0 auto; }
 
+  .top{ margin-bottom:22px; }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--sage);
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  h1{
+    font-size:26px;
+    margin:0 0 4px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .sub{ color:var(--text-dim); font-size:14px; margin:0; line-height:1.5; }
+
+  /* streak dots */
+  .streak{
+    display:flex;
+    gap:7px;
+    margin:18px 0 24px;
+  }
+  .dot{
+    flex:1;
+    height:6px;
+    border-radius:3px;
+    background:var(--line);
+    transition:background .25s ease;
+  }
+  .dot.done{ background:var(--sage); }
+  .dot.today{ box-shadow:0 0 0 2px var(--bg), 0 0 0 3px var(--sage); }
+
+  .day{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 16px 14px;
+    margin-bottom:12px;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .day.done{ background:var(--card-done); border-color:var(--sage); }
+
+  .day-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+  }
+  .day-head-left{ display:flex; align-items:center; gap:10px; }
+
+  .check{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:2px solid var(--line);
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .2s ease;
+  }
+  .day.done .check{ background:var(--sage); border-color:var(--sage); }
+  .check svg{ width:14px; height:14px; opacity:0; transition:opacity .15s ease; }
+  .day.done .check svg{ opacity:1; }
+
+  .day-name{ font-weight:700; font-size:16px; }
+  .day-date{ font-size:12px; color:var(--text-dim); margin-top:1px; }
+
+  .tag{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:4px 9px;
+    border-radius:20px;
+    background:rgba(143,169,140,0.15);
+    color:var(--sage);
+  }
+  .tag.intense{ background:rgba(199,123,86,0.18); color:var(--clay); }
+  .tag.rest{ background:rgba(147,163,153,0.12); color:var(--text-dim); }
+
+  .detail{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .28s ease;
+  }
+  .detail.open{ max-height:400px; }
+  .detail-inner{ padding-top:14px; }
+  .detail ul{ margin:0; padding-left:18px; color:var(--text-dim); font-size:14px; line-height:1.85; }
+  .detail .note{
+    margin-top:8px;
+    font-size:13px;
+    color:var(--sage);
+    font-style:italic;
+  }
+
+  .footer-note{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:13px;
+    margin-top:26px;
+    line-height:1.6;
+    padding:0 10px;
+  }
+
+  .reset{
+    display:block;
+    margin:18px auto 0;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:20px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <p class="eyebrow">The Low Bar</p>
+    <h1>This week</h1>
+    <p class="sub">Tap a day when you show up. That's the whole job.</p>
+  </div>
+
+  <div class="streak" id="streak"></div>
+
+  <div id="days"></div>
+
+  <p class="footer-note">Bike days can stack on a strength day if that's easier — it still counts as both.</p>
+  <button class="reset" id="resetBtn">Reset this week</button>
+</div>
+
+<script>
+const PLAN = [
+  { key:'mon', name:'Monday', type:'intense', tag:'Intense · 15m',
+    items:['2 min dynamic warm-up (leg swings, arm circles, cat-cows)','40s jump rope','10 goblet squats','10 db rows / arm','10 push-ups (bench OK)','20s rest — repeat x3'],
+    note:'3-4 min stretch cooldown — hips, hamstrings, shoulders.' },
+  { key:'tue', name:'Tuesday', type:'bike', tag:'Bike · 30m',
+    items:['Steady, easy pace','No pace or distance target — just pedal'] },
+  { key:'wed', name:'Wednesday', type:'easy', tag:'Mobility · 15m',
+    items:['5 min easy rope or stepping to warm up','10 min static stretching — hip flexors, hamstrings, chest, calves (30-45s holds each)'],
+    note:'Stay warm and go slow — this is where flexibility actually builds.' },
+  { key:'thu', name:'Thursday', type:'intense', tag:'Intense + Bike',
+    items:['2 min dynamic warm-up','Intense set (15m, same as Monday)','Bike 30m — same day or split however works'],
+    note:'Stretch cooldown after the strength portion.' },
+  { key:'fri', name:'Friday', type:'easy', tag:'Mobility · 15m',
+    items:['5 min easy rope or stepping to warm up','10 min static stretching — hip flexors, hamstrings, chest, calves (30-45s holds each)'],
+    note:'Stay warm and go slow — this is where flexibility actually builds.' },
+  { key:'sat', name:'Saturday', type:'intense', tag:'Intense · 15m',
+    items:['2 min dynamic warm-up (leg swings, arm circles, cat-cows)','40s jump rope','10 goblet squats','10 db rows / arm','10 push-ups (bench OK)','20s rest — repeat x3'],
+    note:'3-4 min stretch cooldown — hips, hamstrings, shoulders.' },
+  { key:'sun', name:'Sunday', type:'rest', tag:'Bike or rest',
+    items:['30m easy bike, or take the day fully off','A few minutes of hip/quad stretching if you ride'] },
+];
+
+const STORE_PREFIX = 'lowbar:';
+let state = {};
+let openKey = null;
+
+function weekId(){
+  const d = new Date();
+  const onejan = new Date(d.getFullYear(),0,1);
+  const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay()+1)/7);
+  return `${d.getFullYear()}-w${week}`;
+}
+function todayKey(){
+  const idx = new Date().getDay(); // 0 sun .. 6 sat
+  const map = ['sun','mon','tue','wed','thu','fri','sat'];
+  return map[idx];
+}
+
+const hasClaudeStorage = typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+
+async function load(){
+  const k = STORE_PREFIX + weekId();
+  if(hasClaudeStorage){
+    try{
+      const res = await window.storage.get(k);
+      state = res ? JSON.parse(res.value) : {};
+      render();
+      return;
+    }catch(e){
+      // fall through to localStorage below
+    }
+  }
+  try{
+    const raw = localStorage.getItem(k);
+    state = raw ? JSON.parse(raw) : {};
+  }catch(e){ state = {}; }
+  render();
+}
+async function save(){
+  const k = STORE_PREFIX + weekId();
+  const payload = JSON.stringify(state);
+  if(hasClaudeStorage){
+    try{
+      await window.storage.set(k, payload);
+      return;
+    }catch(e){
+      // fall through to localStorage below
+    }
+  }
+  try{
+    localStorage.setItem(k, payload);
+  }catch(e){
+    console.error('save failed everywhere', e);
+  }
+}
+
+function toggle(key){
+  state[key] = !state[key];
+  save();
+  render();
+}
+function toggleOpen(key){
+  openKey = openKey === key ? null : key;
+  render();
+}
+
+function render(){
+  const today = todayKey();
+
+  // streak dots
+  const streakEl = document.getElementById('streak');
+  streakEl.innerHTML = PLAN.map(d => {
+    const cls = ['dot'];
+    if(state[d.key]) cls.push('done');
+    if(d.key === today) cls.push('today');
+    return `<div class="${cls.join(' ')}"></div>`;
+  }).join('');
+
+  const daysEl = document.getElementById('days');
+  daysEl.innerHTML = PLAN.map(d => {
+    const done = !!state[d.key];
+    const open = openKey === d.key;
+    return `
+      <div class="day ${done ? 'done' : ''}">
+        <div class="day-head" data-openkey="${d.key}">
+          <div class="day-head-left">
+            <div class="check" data-togglekey="${d.key}">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#1B2320" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="day-name">${d.name}${d.key===today ? ' · today' : ''}</div>
+              <div class="day-date"></div>
+            </div>
+          </div>
+          <div class="tag ${d.type}">${d.tag}</div>
+        </div>
+        <div class="detail ${open ? 'open' : ''}">
+          <div class="detail-inner">
+            <ul>${d.items.map(i => `<li>${i}</li>`).join('')}</ul>
+            ${d.note ? `<div class="note">${d.note}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  daysEl.querySelectorAll('[data-togglekey]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggle(el.getAttribute('data-togglekey'));
+    });
+  });
+  daysEl.querySelectorAll('[data-openkey]').forEach(el => {
+    el.addEventListener('click', () => toggleOpen(el.getAttribute('data-openkey')));
+  });
+}
+
+document.getElementById('resetBtn').addEventListener('click', async () => {
+  state = {};
+  await save();
+  render();
+});
+
+load();
+</script>
+</body>
+</html>
